@@ -16,10 +16,10 @@ USB_MIDI2/
 │   └── Src/
 │       ├── main.c                  ← Application entry point + MIDI task logic
 │       ├── usb_descriptors.c       ← USB descriptors (how the device identifies itself)
-│       ├── tuue sb_port.c             ← Platform glbetween TinyUSB and STM32 HAL
+│       ├── tusb_port.c             ← Platform glue between TinyUSB and STM32 HAL
 │       ├── stm32h5xx_it.c          ← Interrupt handlers (USB IRQ lives here)
 │       └── stm32h5xx_hal_msp.c     ← Low-level peripheral init (USB clocks, power, IRQ)
-└── Middlewares/tinyusb/             ← TinyUSB library (handles all USB protocol details)
+└── Middlewares/tinyusb/            ← TinyUSB library (handles all USB protocol details)
 ```
 
 ---
@@ -300,6 +300,42 @@ Every USB event triggers this hardware interrupt:
 `tud_int_handler(0)` tells TinyUSB to check the USB hardware registers and handle whatever event occurred. The `0` is the root hub port number (this MCU only has one USB port).
 
 **This runs at priority 0 (highest)**, so USB events are never delayed by other interrupts. This is important because USB has strict timing requirements — the host expects responses within a few milliseconds.
+
+### Understanding USB IRQ: Device Side vs. Host Side
+
+**On the STM32 (USB Device):**
+- IRQs are **NOT polled** — they're true hardware interrupts
+- The USB controller automatically triggers the IRQ when an event occurs (data received, transfer complete, connection/disconnection, error, etc.)
+- The CPU immediately pauses current execution, saves state, and jumps to `USB_DRD_FS_IRQHandler()`
+- Very efficient — no CPU time wasted checking for events
+
+**On the Computer (USB Host):**
+- The computer **DOES poll** your device!
+- USB is host-controlled: the host initiates all transfers
+- The computer periodically asks "do you have any MIDI data for me?"
+- For USB MIDI (full-speed USB): typically polls every **1 millisecond**
+
+**The full communication flow:**
+
+```
+Computer (Host)          →  Polls device every 1ms
+                         ↓
+USB Cable                
+                         ↓
+STM32 USB Controller     →  Triggers IRQ when data arrives
+                         ↓
+CPU (via IRQ)            →  Interrupt handler processes data (tud_int_handler)
+```
+
+**Why this architecture?**
+- **Device side:** Event-driven via IRQs ensures the device never misses data when the host polls
+- **Host side:** Polling-based ensures the host has complete control over bus timing
+- **Latency:** USB MIDI has ~1ms latency because the host polls at 1kHz intervals
+
+**IRQ Benefits for MIDI:**
+- **Low latency** - Incoming MIDI messages are captured immediately
+- **No data loss** - Critical for real-time audio applications
+- **Efficient** - CPU is free to do other work between USB events
 
 ---
 

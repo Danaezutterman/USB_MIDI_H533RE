@@ -2,6 +2,24 @@
 
 This project has been configured to use tinyUSB as a USB MIDI device on the NUCLEO-H533RE board.
 
+## Getting Started
+
+### Cloning the Repository
+
+This project uses TinyUSB as a Git submodule. When cloning, use one of these methods:
+
+**Option 1: Clone with submodules automatically**
+```bash
+git clone --recursive <repository-url>
+```
+
+**Option 2: If you already cloned without `--recursive`**
+```bash
+git submodule update --init --recursive
+```
+
+This will fetch TinyUSB into the `Middlewares/tinyusb/` directory at the correct version.
+
 ## What Was Added
 
 ### 1. TinyUSB Library
