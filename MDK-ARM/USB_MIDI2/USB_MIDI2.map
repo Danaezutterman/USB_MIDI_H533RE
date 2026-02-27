@@ -3644,8 +3644,8 @@ Memory Map of the image
     0x080076c8   0x080076c8   0x00000024   Data   RO         1418    .rodata._usbd_driver  usbd.o
     0x080076ec   0x080076ec   0x00000012   Data   RO         1188    .rodata.desc_device  usb_descriptors.o
     0x080076fe   0x080076fe   0x00000065   Data   RO         1189    .rodata.desc_fs_configuration  usb_descriptors.o
-    0x08007763   0x08007763   0x00000040   Data   RO         1191    .rodata.str1.1      usb_descriptors.o
-    0x080077a3   0x080077a3   0x00000001   PAD
+    0x08007763   0x08007763   0x0000003f   Data   RO         1191    .rodata.str1.1      usb_descriptors.o
+    0x080077a2   0x080077a2   0x00000002   PAD
     0x080077a4   0x080077a4   0x00000020   Data   RO         1751    Region$$Table       anon$$obj.o
 
 
@@ -3713,14 +3713,14 @@ Image component sizes
       1018          0          0          0          2      14274   tusb.o
       2448          0          0          0          0      30029   tusb_fifo.o
          2          0          0          0          0        797   tusb_port.o
-       252          0        185         20         64       3269   usb_descriptors.o
+       252          0        184         20         64       3269   usb_descriptors.o
       3898         46         36         24        259      33965   usbd.o
        674          0          0          0         84       5998   usbd_control.o
 
     ----------------------------------------------------------------------
      28724        432        898         60       3372     368775   Object Totals
          0          0         32          0          0          0   (incl. Generated)
-       148          0          1          0         16          0   (incl. Padding)
+       148          0          2          0         16          0   (incl. Padding)
 
     ----------------------------------------------------------------------
 
