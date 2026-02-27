@@ -31,22 +31,22 @@ I (..\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_exti.h)(0x69A14C88)
 I (..\Drivers\BSP\STM32H5xx_Nucleo\stm32h5xx_nucleo.h)(0x69A14C88)
 I (..\Core\Inc\stm32h5xx_nucleo_conf.h)(0x69A14C88)
 I (..\Drivers\BSP\STM32H5xx_Nucleo\stm32h5xx_nucleo_errno.h)(0x69A14C88)
-I (..\Middlewares\tinyusb\src\tusb.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_common.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\tusb_option.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_compiler.h)(0x00000000)
+I (..\Middlewares\tinyusb\src\tusb.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_common.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\tusb_option.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_compiler.h)(0x69A150B5)
 I (..\Core\Inc\tusb_config.h)(0x69A14C88)
-I (..\Middlewares\tinyusb\src\common\tusb_mcu.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_verify.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_types.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_debug.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\osal\osal.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\osal\osal_none.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_fifo.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\device\usbd.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\class\midi\midi_device.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\class\audio\audio.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\class\midi\midi.h)(0x00000000)
+I (..\Middlewares\tinyusb\src\common\tusb_mcu.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_verify.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_types.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_debug.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\osal\osal.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\osal\osal_none.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_fifo.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\device\usbd.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\class\midi\midi_device.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\class\audio\audio.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\class\midi\midi.h)(0x69A150B5)
 F (../Core/Src/stm32h5xx_it.c)(0x69A14C88)(-xc -std=c11 --target=arm-arm-none-eabi -mcpu=cortex-m33 -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__EVAL -gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H5xx_HAL_Driver/Inc -I ../Drivers/STM32H5xx_HAL_Driver/Inc/Legacy -I ../Drivers/BSP/STM32H5xx_Nucleo -I ../Drivers/CMSIS/Device/ST/STM32H5xx/Include -I ../Drivers/CMSIS/Include -I ../Middlewares/tinyusb/src -I ../Middlewares/tinyusb/src/device -I ../Middlewares/tinyusb/src/class/midi-I./RTE/_USB_MIDI2-IC:/Users/Gebruiker/AppData/Local/Arm/Packs/ARM/CMSIS/6.1.0/CMSIS/Core/Include-D__UVISION_VERSION="541" -DSTM32H533xx -D_RTE_ -DUSE_NUCLEO_64 -DUSE_HAL_DRIVER -DSTM32H533xx -DCFG_TUSB_MCU="OPT_MCU_STM32H5" -Dasm="__asm"-o usb_midi2/stm32h5xx_it.o -MMD)
 I (..\Core\Inc\main.h)(0x69A14C88)
 I (..\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal.h)(0x69A14C88)
@@ -78,22 +78,22 @@ I (..\Drivers\BSP\STM32H5xx_Nucleo\stm32h5xx_nucleo.h)(0x69A14C88)
 I (..\Core\Inc\stm32h5xx_nucleo_conf.h)(0x69A14C88)
 I (..\Drivers\BSP\STM32H5xx_Nucleo\stm32h5xx_nucleo_errno.h)(0x69A14C88)
 I (..\Core\Inc\stm32h5xx_it.h)(0x69A14C88)
-I (..\Middlewares\tinyusb\src\tusb.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_common.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\tusb_option.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_compiler.h)(0x00000000)
+I (..\Middlewares\tinyusb\src\tusb.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_common.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\tusb_option.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_compiler.h)(0x69A150B5)
 I (..\Core\Inc\tusb_config.h)(0x69A14C88)
-I (..\Middlewares\tinyusb\src\common\tusb_mcu.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_verify.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_types.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_debug.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\osal\osal.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\osal\osal_none.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_fifo.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\device\usbd.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\class\midi\midi_device.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\class\audio\audio.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\class\midi\midi.h)(0x00000000)
+I (..\Middlewares\tinyusb\src\common\tusb_mcu.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_verify.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_types.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_debug.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\osal\osal.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\osal\osal_none.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_fifo.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\device\usbd.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\class\midi\midi_device.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\class\audio\audio.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\class\midi\midi.h)(0x69A150B5)
 F (../Core/Src/stm32h5xx_hal_msp.c)(0x69A14C88)(-xc -std=c11 --target=arm-arm-none-eabi -mcpu=cortex-m33 -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__EVAL -gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H5xx_HAL_Driver/Inc -I ../Drivers/STM32H5xx_HAL_Driver/Inc/Legacy -I ../Drivers/BSP/STM32H5xx_Nucleo -I ../Drivers/CMSIS/Device/ST/STM32H5xx/Include -I ../Drivers/CMSIS/Include -I ../Middlewares/tinyusb/src -I ../Middlewares/tinyusb/src/device -I ../Middlewares/tinyusb/src/class/midi-I./RTE/_USB_MIDI2-IC:/Users/Gebruiker/AppData/Local/Arm/Packs/ARM/CMSIS/6.1.0/CMSIS/Core/Include-D__UVISION_VERSION="541" -DSTM32H533xx -D_RTE_ -DUSE_NUCLEO_64 -DUSE_HAL_DRIVER -DSTM32H533xx -DCFG_TUSB_MCU="OPT_MCU_STM32H5" -Dasm="__asm"-o usb_midi2/stm32h5xx_hal_msp.o -MMD)
 I (..\Core\Inc\main.h)(0x69A14C88)
 I (..\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal.h)(0x69A14C88)
@@ -673,144 +673,144 @@ I (..\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_pcd.h)(0x69A14C88)
 I (..\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_ll_usb.h)(0x69A14C88)
 I (..\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_pcd_ex.h)(0x69A14C88)
 I (..\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_exti.h)(0x69A14C88)
-F (../Core/Src/usb_descriptors.c)(0x69A14C88)(-xc -std=c11 --target=arm-arm-none-eabi -mcpu=cortex-m33 -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__EVAL -gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H5xx_HAL_Driver/Inc -I ../Drivers/STM32H5xx_HAL_Driver/Inc/Legacy -I ../Drivers/BSP/STM32H5xx_Nucleo -I ../Drivers/CMSIS/Device/ST/STM32H5xx/Include -I ../Drivers/CMSIS/Include -I ../Middlewares/tinyusb/src -I ../Middlewares/tinyusb/src/device -I ../Middlewares/tinyusb/src/class/midi-I./RTE/_USB_MIDI2-IC:/Users/Gebruiker/AppData/Local/Arm/Packs/ARM/CMSIS/6.1.0/CMSIS/Core/Include-D__UVISION_VERSION="541" -DSTM32H533xx -D_RTE_ -DUSE_NUCLEO_64 -DUSE_HAL_DRIVER -DSTM32H533xx -DCFG_TUSB_MCU="OPT_MCU_STM32H5" -Dasm="__asm"-o usb_midi2/usb_descriptors.o -MMD)
-I (..\Middlewares\tinyusb\src\tusb.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_common.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\tusb_option.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_compiler.h)(0x00000000)
+F (../Core/Src/usb_descriptors.c)(0x69A153FC)(-xc -std=c11 --target=arm-arm-none-eabi -mcpu=cortex-m33 -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__EVAL -gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H5xx_HAL_Driver/Inc -I ../Drivers/STM32H5xx_HAL_Driver/Inc/Legacy -I ../Drivers/BSP/STM32H5xx_Nucleo -I ../Drivers/CMSIS/Device/ST/STM32H5xx/Include -I ../Drivers/CMSIS/Include -I ../Middlewares/tinyusb/src -I ../Middlewares/tinyusb/src/device -I ../Middlewares/tinyusb/src/class/midi-I./RTE/_USB_MIDI2-IC:/Users/Gebruiker/AppData/Local/Arm/Packs/ARM/CMSIS/6.1.0/CMSIS/Core/Include-D__UVISION_VERSION="541" -DSTM32H533xx -D_RTE_ -DUSE_NUCLEO_64 -DUSE_HAL_DRIVER -DSTM32H533xx -DCFG_TUSB_MCU="OPT_MCU_STM32H5" -Dasm="__asm"-o usb_midi2/usb_descriptors.o -MMD)
+I (..\Middlewares\tinyusb\src\tusb.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_common.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\tusb_option.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_compiler.h)(0x69A150B5)
 I (..\Core\Inc\tusb_config.h)(0x69A14C88)
-I (..\Middlewares\tinyusb\src\common\tusb_mcu.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_verify.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_types.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_debug.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\osal\osal.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\osal\osal_none.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_fifo.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\device\usbd.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\class\midi\midi_device.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\class\audio\audio.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\class\midi\midi.h)(0x00000000)
+I (..\Middlewares\tinyusb\src\common\tusb_mcu.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_verify.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_types.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_debug.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\osal\osal.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\osal\osal_none.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_fifo.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\device\usbd.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\class\midi\midi_device.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\class\audio\audio.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\class\midi\midi.h)(0x69A150B5)
 F (../Core/Src/tusb_port.c)(0x69A14C88)(-xc -std=c11 --target=arm-arm-none-eabi -mcpu=cortex-m33 -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__EVAL -gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H5xx_HAL_Driver/Inc -I ../Drivers/STM32H5xx_HAL_Driver/Inc/Legacy -I ../Drivers/BSP/STM32H5xx_Nucleo -I ../Drivers/CMSIS/Device/ST/STM32H5xx/Include -I ../Drivers/CMSIS/Include -I ../Middlewares/tinyusb/src -I ../Middlewares/tinyusb/src/device -I ../Middlewares/tinyusb/src/class/midi-I./RTE/_USB_MIDI2-IC:/Users/Gebruiker/AppData/Local/Arm/Packs/ARM/CMSIS/6.1.0/CMSIS/Core/Include-D__UVISION_VERSION="541" -DSTM32H533xx -D_RTE_ -DUSE_NUCLEO_64 -DUSE_HAL_DRIVER -DSTM32H533xx -DCFG_TUSB_MCU="OPT_MCU_STM32H5" -Dasm="__asm"-o usb_midi2/tusb_port.o -MMD)
-I (..\Middlewares\tinyusb\src\tusb.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_common.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\tusb_option.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_compiler.h)(0x00000000)
+I (..\Middlewares\tinyusb\src\tusb.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_common.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\tusb_option.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_compiler.h)(0x69A150B5)
 I (..\Core\Inc\tusb_config.h)(0x69A14C88)
-I (..\Middlewares\tinyusb\src\common\tusb_mcu.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_verify.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_types.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_debug.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\osal\osal.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\osal\osal_none.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_fifo.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\device\usbd.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\class\midi\midi_device.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\class\audio\audio.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\class\midi\midi.h)(0x00000000)
-F (../Middlewares/tinyusb/src/tusb.c)(0x00000000)(-xc -std=c11 --target=arm-arm-none-eabi -mcpu=cortex-m33 -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__EVAL -gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H5xx_HAL_Driver/Inc -I ../Drivers/STM32H5xx_HAL_Driver/Inc/Legacy -I ../Drivers/BSP/STM32H5xx_Nucleo -I ../Drivers/CMSIS/Device/ST/STM32H5xx/Include -I ../Drivers/CMSIS/Include -I ../Middlewares/tinyusb/src -I ../Middlewares/tinyusb/src/device -I ../Middlewares/tinyusb/src/class/midi-I./RTE/_USB_MIDI2-IC:/Users/Gebruiker/AppData/Local/Arm/Packs/ARM/CMSIS/6.1.0/CMSIS/Core/Include-D__UVISION_VERSION="541" -DSTM32H533xx -D_RTE_ -DUSE_NUCLEO_64 -DUSE_HAL_DRIVER -DSTM32H533xx -DCFG_TUSB_MCU="OPT_MCU_STM32H5" -Dasm="__asm"-o usb_midi2/tusb.o -MMD)
-I (..\Middlewares\tinyusb\src\tusb_option.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_compiler.h)(0x00000000)
+I (..\Middlewares\tinyusb\src\common\tusb_mcu.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_verify.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_types.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_debug.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\osal\osal.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\osal\osal_none.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_fifo.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\device\usbd.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\class\midi\midi_device.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\class\audio\audio.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\class\midi\midi.h)(0x69A150B5)
+F (../Middlewares/tinyusb/src/tusb.c)(0x69A150B5)(-xc -std=c11 --target=arm-arm-none-eabi -mcpu=cortex-m33 -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__EVAL -gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H5xx_HAL_Driver/Inc -I ../Drivers/STM32H5xx_HAL_Driver/Inc/Legacy -I ../Drivers/BSP/STM32H5xx_Nucleo -I ../Drivers/CMSIS/Device/ST/STM32H5xx/Include -I ../Drivers/CMSIS/Include -I ../Middlewares/tinyusb/src -I ../Middlewares/tinyusb/src/device -I ../Middlewares/tinyusb/src/class/midi-I./RTE/_USB_MIDI2-IC:/Users/Gebruiker/AppData/Local/Arm/Packs/ARM/CMSIS/6.1.0/CMSIS/Core/Include-D__UVISION_VERSION="541" -DSTM32H533xx -D_RTE_ -DUSE_NUCLEO_64 -DUSE_HAL_DRIVER -DSTM32H533xx -DCFG_TUSB_MCU="OPT_MCU_STM32H5" -Dasm="__asm"-o usb_midi2/tusb.o -MMD)
+I (..\Middlewares\tinyusb\src\tusb_option.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_compiler.h)(0x69A150B5)
 I (..\Core\Inc\tusb_config.h)(0x69A14C88)
-I (..\Middlewares\tinyusb\src\common\tusb_mcu.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\tusb.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_common.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_verify.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_types.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_debug.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\osal\osal.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\osal\osal_none.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_fifo.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\device\usbd.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\class\midi\midi_device.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\class\audio\audio.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\class\midi\midi.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_private.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\device\usbd_pvt.h)(0x00000000)
-F (../Middlewares/tinyusb/src/common/tusb_fifo.c)(0x00000000)(-xc -std=c11 --target=arm-arm-none-eabi -mcpu=cortex-m33 -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__EVAL -gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H5xx_HAL_Driver/Inc -I ../Drivers/STM32H5xx_HAL_Driver/Inc/Legacy -I ../Drivers/BSP/STM32H5xx_Nucleo -I ../Drivers/CMSIS/Device/ST/STM32H5xx/Include -I ../Drivers/CMSIS/Include -I ../Middlewares/tinyusb/src -I ../Middlewares/tinyusb/src/device -I ../Middlewares/tinyusb/src/class/midi-I./RTE/_USB_MIDI2-IC:/Users/Gebruiker/AppData/Local/Arm/Packs/ARM/CMSIS/6.1.0/CMSIS/Core/Include-D__UVISION_VERSION="541" -DSTM32H533xx -D_RTE_ -DUSE_NUCLEO_64 -DUSE_HAL_DRIVER -DSTM32H533xx -DCFG_TUSB_MCU="OPT_MCU_STM32H5" -Dasm="__asm"-o usb_midi2/tusb_fifo.o -MMD)
-I (..\Middlewares\tinyusb\src\osal\osal.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_common.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\tusb_option.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_compiler.h)(0x00000000)
+I (..\Middlewares\tinyusb\src\common\tusb_mcu.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\tusb.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_common.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_verify.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_types.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_debug.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\osal\osal.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\osal\osal_none.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_fifo.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\device\usbd.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\class\midi\midi_device.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\class\audio\audio.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\class\midi\midi.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_private.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\device\usbd_pvt.h)(0x69A150B5)
+F (../Middlewares/tinyusb/src/common/tusb_fifo.c)(0x69A150B5)(-xc -std=c11 --target=arm-arm-none-eabi -mcpu=cortex-m33 -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__EVAL -gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H5xx_HAL_Driver/Inc -I ../Drivers/STM32H5xx_HAL_Driver/Inc/Legacy -I ../Drivers/BSP/STM32H5xx_Nucleo -I ../Drivers/CMSIS/Device/ST/STM32H5xx/Include -I ../Drivers/CMSIS/Include -I ../Middlewares/tinyusb/src -I ../Middlewares/tinyusb/src/device -I ../Middlewares/tinyusb/src/class/midi-I./RTE/_USB_MIDI2-IC:/Users/Gebruiker/AppData/Local/Arm/Packs/ARM/CMSIS/6.1.0/CMSIS/Core/Include-D__UVISION_VERSION="541" -DSTM32H533xx -D_RTE_ -DUSE_NUCLEO_64 -DUSE_HAL_DRIVER -DSTM32H533xx -DCFG_TUSB_MCU="OPT_MCU_STM32H5" -Dasm="__asm"-o usb_midi2/tusb_fifo.o -MMD)
+I (..\Middlewares\tinyusb\src\osal\osal.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_common.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\tusb_option.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_compiler.h)(0x69A150B5)
 I (..\Core\Inc\tusb_config.h)(0x69A14C88)
-I (..\Middlewares\tinyusb\src\common\tusb_mcu.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_verify.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_types.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_debug.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\osal\osal_none.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_fifo.h)(0x00000000)
-F (../Middlewares/tinyusb/src/device/usbd.c)(0x00000000)(-xc -std=c11 --target=arm-arm-none-eabi -mcpu=cortex-m33 -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__EVAL -gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H5xx_HAL_Driver/Inc -I ../Drivers/STM32H5xx_HAL_Driver/Inc/Legacy -I ../Drivers/BSP/STM32H5xx_Nucleo -I ../Drivers/CMSIS/Device/ST/STM32H5xx/Include -I ../Drivers/CMSIS/Include -I ../Middlewares/tinyusb/src -I ../Middlewares/tinyusb/src/device -I ../Middlewares/tinyusb/src/class/midi-I./RTE/_USB_MIDI2-IC:/Users/Gebruiker/AppData/Local/Arm/Packs/ARM/CMSIS/6.1.0/CMSIS/Core/Include-D__UVISION_VERSION="541" -DSTM32H533xx -D_RTE_ -DUSE_NUCLEO_64 -DUSE_HAL_DRIVER -DSTM32H533xx -DCFG_TUSB_MCU="OPT_MCU_STM32H5" -Dasm="__asm"-o usb_midi2/usbd.o -MMD)
-I (..\Middlewares\tinyusb\src\tusb_option.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_compiler.h)(0x00000000)
+I (..\Middlewares\tinyusb\src\common\tusb_mcu.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_verify.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_types.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_debug.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\osal\osal_none.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_fifo.h)(0x69A150B5)
+F (../Middlewares/tinyusb/src/device/usbd.c)(0x69A150B5)(-xc -std=c11 --target=arm-arm-none-eabi -mcpu=cortex-m33 -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__EVAL -gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H5xx_HAL_Driver/Inc -I ../Drivers/STM32H5xx_HAL_Driver/Inc/Legacy -I ../Drivers/BSP/STM32H5xx_Nucleo -I ../Drivers/CMSIS/Device/ST/STM32H5xx/Include -I ../Drivers/CMSIS/Include -I ../Middlewares/tinyusb/src -I ../Middlewares/tinyusb/src/device -I ../Middlewares/tinyusb/src/class/midi-I./RTE/_USB_MIDI2-IC:/Users/Gebruiker/AppData/Local/Arm/Packs/ARM/CMSIS/6.1.0/CMSIS/Core/Include-D__UVISION_VERSION="541" -DSTM32H533xx -D_RTE_ -DUSE_NUCLEO_64 -DUSE_HAL_DRIVER -DSTM32H533xx -DCFG_TUSB_MCU="OPT_MCU_STM32H5" -Dasm="__asm"-o usb_midi2/usbd.o -MMD)
+I (..\Middlewares\tinyusb\src\tusb_option.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_compiler.h)(0x69A150B5)
 I (..\Core\Inc\tusb_config.h)(0x69A14C88)
-I (..\Middlewares\tinyusb\src\common\tusb_mcu.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\device\dcd.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_common.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_verify.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_types.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_debug.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\osal\osal.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\osal\osal_none.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_fifo.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\tusb.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\device\usbd.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\class\midi\midi_device.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\class\audio\audio.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\class\midi\midi.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_private.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\device\usbd_pvt.h)(0x00000000)
-F (../Middlewares/tinyusb/src/device/usbd_control.c)(0x00000000)(-xc -std=c11 --target=arm-arm-none-eabi -mcpu=cortex-m33 -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__EVAL -gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H5xx_HAL_Driver/Inc -I ../Drivers/STM32H5xx_HAL_Driver/Inc/Legacy -I ../Drivers/BSP/STM32H5xx_Nucleo -I ../Drivers/CMSIS/Device/ST/STM32H5xx/Include -I ../Drivers/CMSIS/Include -I ../Middlewares/tinyusb/src -I ../Middlewares/tinyusb/src/device -I ../Middlewares/tinyusb/src/class/midi-I./RTE/_USB_MIDI2-IC:/Users/Gebruiker/AppData/Local/Arm/Packs/ARM/CMSIS/6.1.0/CMSIS/Core/Include-D__UVISION_VERSION="541" -DSTM32H533xx -D_RTE_ -DUSE_NUCLEO_64 -DUSE_HAL_DRIVER -DSTM32H533xx -DCFG_TUSB_MCU="OPT_MCU_STM32H5" -Dasm="__asm"-o usb_midi2/usbd_control.o -MMD)
-I (..\Middlewares\tinyusb\src\tusb_option.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_compiler.h)(0x00000000)
+I (..\Middlewares\tinyusb\src\common\tusb_mcu.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\device\dcd.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_common.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_verify.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_types.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_debug.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\osal\osal.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\osal\osal_none.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_fifo.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\tusb.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\device\usbd.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\class\midi\midi_device.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\class\audio\audio.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\class\midi\midi.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_private.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\device\usbd_pvt.h)(0x69A150B5)
+F (../Middlewares/tinyusb/src/device/usbd_control.c)(0x69A150B5)(-xc -std=c11 --target=arm-arm-none-eabi -mcpu=cortex-m33 -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__EVAL -gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H5xx_HAL_Driver/Inc -I ../Drivers/STM32H5xx_HAL_Driver/Inc/Legacy -I ../Drivers/BSP/STM32H5xx_Nucleo -I ../Drivers/CMSIS/Device/ST/STM32H5xx/Include -I ../Drivers/CMSIS/Include -I ../Middlewares/tinyusb/src -I ../Middlewares/tinyusb/src/device -I ../Middlewares/tinyusb/src/class/midi-I./RTE/_USB_MIDI2-IC:/Users/Gebruiker/AppData/Local/Arm/Packs/ARM/CMSIS/6.1.0/CMSIS/Core/Include-D__UVISION_VERSION="541" -DSTM32H533xx -D_RTE_ -DUSE_NUCLEO_64 -DUSE_HAL_DRIVER -DSTM32H533xx -DCFG_TUSB_MCU="OPT_MCU_STM32H5" -Dasm="__asm"-o usb_midi2/usbd_control.o -MMD)
+I (..\Middlewares\tinyusb\src\tusb_option.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_compiler.h)(0x69A150B5)
 I (..\Core\Inc\tusb_config.h)(0x69A14C88)
-I (..\Middlewares\tinyusb\src\common\tusb_mcu.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\device\dcd.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_common.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_verify.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_types.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_debug.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\osal\osal.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\osal\osal_none.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_fifo.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\tusb.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\device\usbd.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\class\midi\midi_device.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\class\audio\audio.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\class\midi\midi.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\device\usbd_pvt.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_private.h)(0x00000000)
-F (../Middlewares/tinyusb/src/class/midi/midi_device.c)(0x00000000)(-xc -std=c11 --target=arm-arm-none-eabi -mcpu=cortex-m33 -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__EVAL -gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H5xx_HAL_Driver/Inc -I ../Drivers/STM32H5xx_HAL_Driver/Inc/Legacy -I ../Drivers/BSP/STM32H5xx_Nucleo -I ../Drivers/CMSIS/Device/ST/STM32H5xx/Include -I ../Drivers/CMSIS/Include -I ../Middlewares/tinyusb/src -I ../Middlewares/tinyusb/src/device -I ../Middlewares/tinyusb/src/class/midi-I./RTE/_USB_MIDI2-IC:/Users/Gebruiker/AppData/Local/Arm/Packs/ARM/CMSIS/6.1.0/CMSIS/Core/Include-D__UVISION_VERSION="541" -DSTM32H533xx -D_RTE_ -DUSE_NUCLEO_64 -DUSE_HAL_DRIVER -DSTM32H533xx -DCFG_TUSB_MCU="OPT_MCU_STM32H5" -Dasm="__asm"-o usb_midi2/midi_device.o -MMD)
-I (..\Middlewares\tinyusb\src\tusb_option.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_compiler.h)(0x00000000)
+I (..\Middlewares\tinyusb\src\common\tusb_mcu.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\device\dcd.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_common.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_verify.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_types.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_debug.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\osal\osal.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\osal\osal_none.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_fifo.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\tusb.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\device\usbd.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\class\midi\midi_device.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\class\audio\audio.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\class\midi\midi.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\device\usbd_pvt.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_private.h)(0x69A150B5)
+F (../Middlewares/tinyusb/src/class/midi/midi_device.c)(0x69A150B5)(-xc -std=c11 --target=arm-arm-none-eabi -mcpu=cortex-m33 -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__EVAL -gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H5xx_HAL_Driver/Inc -I ../Drivers/STM32H5xx_HAL_Driver/Inc/Legacy -I ../Drivers/BSP/STM32H5xx_Nucleo -I ../Drivers/CMSIS/Device/ST/STM32H5xx/Include -I ../Drivers/CMSIS/Include -I ../Middlewares/tinyusb/src -I ../Middlewares/tinyusb/src/device -I ../Middlewares/tinyusb/src/class/midi-I./RTE/_USB_MIDI2-IC:/Users/Gebruiker/AppData/Local/Arm/Packs/ARM/CMSIS/6.1.0/CMSIS/Core/Include-D__UVISION_VERSION="541" -DSTM32H533xx -D_RTE_ -DUSE_NUCLEO_64 -DUSE_HAL_DRIVER -DSTM32H533xx -DCFG_TUSB_MCU="OPT_MCU_STM32H5" -Dasm="__asm"-o usb_midi2/midi_device.o -MMD)
+I (..\Middlewares\tinyusb\src\tusb_option.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_compiler.h)(0x69A150B5)
 I (..\Core\Inc\tusb_config.h)(0x69A14C88)
-I (..\Middlewares\tinyusb\src\common\tusb_mcu.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\device\usbd.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_common.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_verify.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_types.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_debug.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\device\usbd_pvt.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\osal\osal.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\osal\osal_none.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_fifo.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_private.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\class\midi\midi_device.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\class\audio\audio.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\class\midi\midi.h)(0x00000000)
-F (../Middlewares/tinyusb/src/portable/st/stm32_fsdev/dcd_stm32_fsdev.c)(0x00000000)(-xc -std=c11 --target=arm-arm-none-eabi -mcpu=cortex-m33 -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__EVAL -gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H5xx_HAL_Driver/Inc -I ../Drivers/STM32H5xx_HAL_Driver/Inc/Legacy -I ../Drivers/BSP/STM32H5xx_Nucleo -I ../Drivers/CMSIS/Device/ST/STM32H5xx/Include -I ../Drivers/CMSIS/Include -I ../Middlewares/tinyusb/src -I ../Middlewares/tinyusb/src/device -I ../Middlewares/tinyusb/src/class/midi-I./RTE/_USB_MIDI2-IC:/Users/Gebruiker/AppData/Local/Arm/Packs/ARM/CMSIS/6.1.0/CMSIS/Core/Include-D__UVISION_VERSION="541" -DSTM32H533xx -D_RTE_ -DUSE_NUCLEO_64 -DUSE_HAL_DRIVER -DSTM32H533xx -DCFG_TUSB_MCU="OPT_MCU_STM32H5" -Dasm="__asm"-o usb_midi2/dcd_stm32_fsdev.o -MMD)
-I (..\Middlewares\tinyusb\src\tusb_option.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_compiler.h)(0x00000000)
+I (..\Middlewares\tinyusb\src\common\tusb_mcu.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\device\usbd.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_common.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_verify.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_types.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_debug.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\device\usbd_pvt.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\osal\osal.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\osal\osal_none.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_fifo.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_private.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\class\midi\midi_device.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\class\audio\audio.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\class\midi\midi.h)(0x69A150B5)
+F (../Middlewares/tinyusb/src/portable/st/stm32_fsdev/dcd_stm32_fsdev.c)(0x69A150B5)(-xc -std=c11 --target=arm-arm-none-eabi -mcpu=cortex-m33 -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__EVAL -gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H5xx_HAL_Driver/Inc -I ../Drivers/STM32H5xx_HAL_Driver/Inc/Legacy -I ../Drivers/BSP/STM32H5xx_Nucleo -I ../Drivers/CMSIS/Device/ST/STM32H5xx/Include -I ../Drivers/CMSIS/Include -I ../Middlewares/tinyusb/src -I ../Middlewares/tinyusb/src/device -I ../Middlewares/tinyusb/src/class/midi-I./RTE/_USB_MIDI2-IC:/Users/Gebruiker/AppData/Local/Arm/Packs/ARM/CMSIS/6.1.0/CMSIS/Core/Include-D__UVISION_VERSION="541" -DSTM32H533xx -D_RTE_ -DUSE_NUCLEO_64 -DUSE_HAL_DRIVER -DSTM32H533xx -DCFG_TUSB_MCU="OPT_MCU_STM32H5" -Dasm="__asm"-o usb_midi2/dcd_stm32_fsdev.o -MMD)
+I (..\Middlewares\tinyusb\src\tusb_option.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_compiler.h)(0x69A150B5)
 I (..\Core\Inc\tusb_config.h)(0x69A14C88)
-I (..\Middlewares\tinyusb\src\common\tusb_mcu.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\device\dcd.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_common.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_verify.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_types.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_debug.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\osal\osal.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\osal\osal_none.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_fifo.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\portable\st\stm32_fsdev\fsdev_common.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\portable\st\stm32_fsdev\fsdev_stm32.h)(0x00000000)
+I (..\Middlewares\tinyusb\src\common\tusb_mcu.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\device\dcd.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_common.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_verify.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_types.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_debug.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\osal\osal.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\osal\osal_none.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_fifo.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\portable\st\stm32_fsdev\fsdev_common.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\portable\st\stm32_fsdev\fsdev_stm32.h)(0x69A150B5)
 I (..\Drivers\CMSIS\Device\ST\STM32H5xx\Include\stm32h5xx.h)(0x69A14C88)
 I (..\Drivers\CMSIS\Device\ST\STM32H5xx\Include\stm32h533xx.h)(0x69A14C88)
 I (..\Drivers\CMSIS\Include\core_cm33.h)(0x69A14C88)
@@ -836,21 +836,21 @@ I (..\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_pcd.h)(0x69A14C88)
 I (..\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_ll_usb.h)(0x69A14C88)
 I (..\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_pcd_ex.h)(0x69A14C88)
 I (..\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_exti.h)(0x69A14C88)
-F (../Middlewares/tinyusb/src/portable/st/stm32_fsdev/fsdev_common.c)(0x00000000)(-xc -std=c11 --target=arm-arm-none-eabi -mcpu=cortex-m33 -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__EVAL -gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H5xx_HAL_Driver/Inc -I ../Drivers/STM32H5xx_HAL_Driver/Inc/Legacy -I ../Drivers/BSP/STM32H5xx_Nucleo -I ../Drivers/CMSIS/Device/ST/STM32H5xx/Include -I ../Drivers/CMSIS/Include -I ../Middlewares/tinyusb/src -I ../Middlewares/tinyusb/src/device -I ../Middlewares/tinyusb/src/class/midi-I./RTE/_USB_MIDI2-IC:/Users/Gebruiker/AppData/Local/Arm/Packs/ARM/CMSIS/6.1.0/CMSIS/Core/Include-D__UVISION_VERSION="541" -DSTM32H533xx -D_RTE_ -DUSE_NUCLEO_64 -DUSE_HAL_DRIVER -DSTM32H533xx -DCFG_TUSB_MCU="OPT_MCU_STM32H5" -Dasm="__asm"-o usb_midi2/fsdev_common.o -MMD)
-I (..\Middlewares\tinyusb\src\tusb_option.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_compiler.h)(0x00000000)
+F (../Middlewares/tinyusb/src/portable/st/stm32_fsdev/fsdev_common.c)(0x69A150B5)(-xc -std=c11 --target=arm-arm-none-eabi -mcpu=cortex-m33 -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__EVAL -gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H5xx_HAL_Driver/Inc -I ../Drivers/STM32H5xx_HAL_Driver/Inc/Legacy -I ../Drivers/BSP/STM32H5xx_Nucleo -I ../Drivers/CMSIS/Device/ST/STM32H5xx/Include -I ../Drivers/CMSIS/Include -I ../Middlewares/tinyusb/src -I ../Middlewares/tinyusb/src/device -I ../Middlewares/tinyusb/src/class/midi-I./RTE/_USB_MIDI2-IC:/Users/Gebruiker/AppData/Local/Arm/Packs/ARM/CMSIS/6.1.0/CMSIS/Core/Include-D__UVISION_VERSION="541" -DSTM32H533xx -D_RTE_ -DUSE_NUCLEO_64 -DUSE_HAL_DRIVER -DSTM32H533xx -DCFG_TUSB_MCU="OPT_MCU_STM32H5" -Dasm="__asm"-o usb_midi2/fsdev_common.o -MMD)
+I (..\Middlewares\tinyusb\src\tusb_option.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_compiler.h)(0x69A150B5)
 I (..\Core\Inc\tusb_config.h)(0x69A14C88)
-I (..\Middlewares\tinyusb\src\common\tusb_mcu.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\portable\st\stm32_fsdev\fsdev_common.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_common.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_verify.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_types.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_debug.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\device\dcd.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\osal\osal.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\osal\osal_none.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\common\tusb_fifo.h)(0x00000000)
-I (..\Middlewares\tinyusb\src\portable\st\stm32_fsdev\fsdev_stm32.h)(0x00000000)
+I (..\Middlewares\tinyusb\src\common\tusb_mcu.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\portable\st\stm32_fsdev\fsdev_common.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_common.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_verify.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_types.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_debug.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\device\dcd.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\osal\osal.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\osal\osal_none.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\common\tusb_fifo.h)(0x69A150B5)
+I (..\Middlewares\tinyusb\src\portable\st\stm32_fsdev\fsdev_stm32.h)(0x69A150B5)
 I (..\Drivers\CMSIS\Device\ST\STM32H5xx\Include\stm32h5xx.h)(0x69A14C88)
 I (..\Drivers\CMSIS\Device\ST\STM32H5xx\Include\stm32h533xx.h)(0x69A14C88)
 I (..\Drivers\CMSIS\Include\core_cm33.h)(0x69A14C88)
