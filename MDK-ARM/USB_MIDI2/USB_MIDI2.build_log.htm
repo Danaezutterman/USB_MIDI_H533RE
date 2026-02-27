@@ -3,13 +3,13 @@
 <pre>
 <h1>µVision Build Log</h1>
 <h2>Tool Versions:</h2>
-IDE-Version: µVision V5.40.0.0
+IDE-Version: µVision V5.41.0.0
 Copyright (C) 2024 ARM Ltd and ARM Germany GmbH. All rights reserved.
-License Information: Tom Pladijs, Tom Pladijs, LIC=----
+License Information: Danaë Zutterman, Vives Student, LIC=----
  
 Tool Versions:
-Toolchain:       MDK-Lite  Version: 5.40.0.3
-Toolchain Path:  C:\Users\tompl\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin
+Toolchain:       MDK-Lite  Version: 5.41.0.0
+Toolchain Path:  C:\Users\Gebruiker\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin
 C Compiler:      ArmClang.exe V6.22
 Assembler:       Armasm.exe V6.22
 Linker/Locator:  ArmLink.exe V6.22
@@ -21,17 +21,76 @@ Target DLL:      STLink\ST-LINKIII-KEIL_SWO.dll V3.3.0.0
 Dialog DLL:      TCM.DLL V1.56.4.0
  
 <h2>Project:</h2>
-C:\Users\tompl\Documents\Vives\Jaar 2\2de Semester\Entertainment Tech\Labo Opdrachten\USB-MIDI-Entertainment-Tech\MDK-ARM\USB_MIDI2.uvprojx
-Project File Date:  02/13/2026
+C:\Users\Gebruiker\Documents\Vives\Fase 2\Fase 2 - Semester 2\Entertainment Tech\Labo-opdrachten juist midi controller\USB_MIDI_H533RE\MDK-ARM\USB_MIDI2.uvprojx
+Project File Date:  02/27/2026
 
 <h2>Output:</h2>
-*** Using Compiler 'V6.22', folder: 'C:\Users\tompl\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin'
+*** Using Compiler 'V6.22', folder: 'C:\Users\Gebruiker\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin'
 Build target 'USB_MIDI2'
+../Core/Src/main.c(24): error: 'tusb.h' file not found
+   24 | #include "tusb.h"
+      |          ^~~~~~~~
+1 error generated.
+compiling main.c...
+../Core/Src/stm32h5xx_it.c(25): error: 'tusb.h' file not found
+   25 | #include "tusb.h"
+      |          ^~~~~~~~
+1 error generated.
+compiling stm32h5xx_it.c...
+compiling stm32h5xx_hal_msp.c...
+compiling stm32h5xx_hal_gpio.c...
+compiling stm32h5xx_hal_pwr.c...
+compiling stm32h5xx_hal_cortex.c...
+compiling stm32h5xx_nucleo.c...
+compiling stm32h5xx_hal_flash.c...
+compiling stm32h5xx_hal_flash_ex.c...
+compiling stm32h5xx_hal_dma.c...
+compiling stm32h5xx_hal_rcc.c...
+compiling stm32h5xx_hal_pwr_ex.c...
+compiling stm32h5xx_hal.c...
+compiling stm32h5xx_hal_usart.c...
+compiling stm32h5xx_hal_rcc_ex.c...
+compiling stm32h5xx_hal_usart_ex.c...
+compiling stm32h5xx_hal_exti.c...
+compiling stm32h5xx_hal_pcd_ex.c...
+../Core/Src/usb_descriptors.c(5): error: 'tusb.h' file not found
+    5 | #include "tusb.h"
+      |          ^~~~~~~~
+1 error generated.
 compiling usb_descriptors.c...
-linking...
-Program Size: Code=29762 RO-data=894 RW-data=60 ZI-data=3468  
-FromELF: creating hex file...
-"USB_MIDI2\USB_MIDI2.axf" - 0 Error(s), 0 Warning(s).
+compiling system_stm32h5xx.c...
+../Core/Src/tusb_port.c(6): error: 'tusb.h' file not found
+    6 | #include "tusb.h"
+      |          ^~~~~~~~
+1 error generated.
+compiling tusb_port.c...
+compiling stm32h5xx_hal_uart_ex.c...
+armclang: error: no such file or directory: '../Middlewares/tinyusb/src/tusb.c'
+armclang: error: no input files
+compiling tusb.c...
+armclang: error: no such file or directory: '../Middlewares/tinyusb/src/common/tusb_fifo.c'
+armclang: error: no input files
+compiling tusb_fifo.c...
+armclang: error: no such file or directory: '../Middlewares/tinyusb/src/device/usbd.c'
+armclang: error: no input files
+compiling usbd.c...
+armclang: error: no such file or directory: '../Middlewares/tinyusb/src/device/usbd_control.c'
+armclang: error: no input files
+compiling usbd_control.c...
+compiling stm32h5xx_hal_dma_ex.c...
+armclang: error: no such file or directory: '../Middlewares/tinyusb/src/class/midi/midi_device.c'
+armclang: error: no input files
+compiling midi_device.c...
+compiling stm32h5xx_hal_pcd.c...
+armclang: error: no such file or directory: '../Middlewares/tinyusb/src/portable/st/stm32_fsdev/dcd_stm32_fsdev.c'
+armclang: error: no input files
+compiling dcd_stm32_fsdev.c...
+armclang: error: no such file or directory: '../Middlewares/tinyusb/src/portable/st/stm32_fsdev/fsdev_common.c'
+armclang: error: no input files
+compiling fsdev_common.c...
+compiling stm32h5xx_ll_usb.c...
+compiling stm32h5xx_hal_uart.c...
+"USB_MIDI2\USB_MIDI2.axf" - 18 Error(s), 0 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -48,13 +107,14 @@ Package Vendor: Keil
 
 <h2>Collection of Component include folders:</h2>
   ./RTE/_USB_MIDI2
-  C:/Users/tompl/AppData/Local/Arm/Packs/ARM/CMSIS/6.1.0/CMSIS/Core/Include
+  C:/Users/Gebruiker/AppData/Local/Arm/Packs/ARM/CMSIS/6.1.0/CMSIS/Core/Include
 
 <h2>Collection of Component Files used:</h2>
 
    * Component: ARM::CMSIS:CORE@6.1.0
       Include file:  CMSIS/Core/Include/tz_context.h
-Build Time Elapsed:  00:00:00
+Target not created.
+Build Time Elapsed:  00:00:02
 </pre>
 </body>
 </html>
