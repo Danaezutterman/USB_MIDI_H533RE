@@ -75,7 +75,6 @@ PCD_HandleTypeDef hpcd_USB_DRD_FS;
 /* USER CODE BEGIN PV */
 
 // Button state tracking (16 buttons in 4x4 matrix)
-static bool button_state[16] = {false};
 static bool button_prev_state[16] = {false};
 
 /* USER CODE END PV */
@@ -393,18 +392,16 @@ void mcp23s17_write_reg(uint8_t reg, uint8_t value)
 
 uint8_t mcp23s17_read_reg(uint8_t reg)
 {
-  uint8_t tx_data[2];
-  uint8_t rx_data;
-  
-  tx_data[0] = MCP23S17_ADDR | MCP23S17_READ; // Control byte
-  tx_data[1] = reg;                            // Register address
+  // Use a single TransmitReceive call for reliable full-duplex SPI
+  uint8_t tx_data[3] = { MCP23S17_ADDR | MCP23S17_READ, reg, 0xFF };
+  uint8_t rx_data[3] = { 0, 0, 0 };
 
   CS_LOW();
-  HAL_SPI_Transmit(&hspi1, tx_data, 2, 100);
-  HAL_SPI_Receive(&hspi1, &rx_data, 1, 100);
+  HAL_SPI_TransmitReceive(&hspi1, tx_data, rx_data, 3, 100);
   CS_HIGH();
 
-  return rx_data;
+  // Data is in the 3rd byte (first two are dummy during address phase)
+  return rx_data[2];
 }
 
 void mcp23s17_init(void)
@@ -446,6 +443,14 @@ void scan_matrix(void)
     return;
   }
   last_scan_ms = HAL_GetTick();
+
+  // SPI sanity check: read back IODIRB (should be 0xFF if MCP23S17 is working)
+  uint8_t iodirb = mcp23s17_read_reg(MCP23S17_IODIRB);
+  if (iodirb != 0xFF) {
+    // MCP23S17 not responding correctly - re-init and skip this scan
+    mcp23s17_init();
+    return;
+  }
 
   // Debounce counter for each button
   static uint8_t debounce_count[16] = {0};
