@@ -33,29 +33,41 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 
-// MCP23S17 Register Addresses
-#define MCP23S17_IODIRA   0x00  // I/O direction A
-#define MCP23S17_IODIRB   0x01  // I/O direction B
-#define MCP23S17_GPPUA    0x0C  // Pull-up A
-#define MCP23S17_GPPUB    0x0D  // Pull-up B
-#define MCP23S17_GPIOA    0x12  // Port A
-#define MCP23S17_GPIOB    0x13  // Port B
+// ================================================================
+// MCP23S17 - SPI GPIO uitbreidingschip (16 extra GPIO pinnen via SPI)
+// ================================================================
 
-// MCP23S17 Control Byte
-#define MCP23S17_ADDR     0x40  // Hardware address (A0=A1=A2=GND)
-#define MCP23S17_WRITE    0x00
-#define MCP23S17_READ     0x01
+// Registeradressen van de MCP23S17
+// Het IODIR-register bepaalt of een pin ingang (1) of uitgang (0) is
+#define MCP23S17_IODIRA   0x00  // Richting register poort A (0=uitgang, 1=ingang)
+#define MCP23S17_IODIRB   0x01  // Richting register poort B (0=uitgang, 1=ingang)
+#define MCP23S17_GPPUA    0x0C  // Pull-up weerstand register poort A (1=aan, 0=uit)
+#define MCP23S17_GPPUB    0x0D  // Pull-up weerstand register poort B (1=aan, 0=uit)
+#define MCP23S17_GPIOA    0x12  // Data register poort A - lezen/schrijven van pin-waarden
+#define MCP23S17_GPIOB    0x13  // Data register poort B - lezen/schrijven van pin-waarden
 
-// CS Pin (PC9)
+// SPI Control Byte: dit is het eerste byte dat je stuurt over SPI
+// Opgebouwd als: 0100 A2 A1 A0 R/W  (A2-A0 = hardware adres, R/W = lezen of schrijven)
+#define MCP23S17_ADDR     0x40  // Hardware adres: A0=A1=A2=GND, dus adres = 000 -> 0x40
+#define MCP23S17_WRITE    0x00  // Bit 0 = 0 => schrijven naar de chip
+#define MCP23S17_READ     0x01  // Bit 0 = 1 => lezen van de chip
+
+// Chip Select (CS) pin - PC9
+// CS LOW = chip geselecteerd (communicatie actief)
+// CS HIGH = chip vrijgegeven (communicatie gestopt)
 #define CS_PIN            GPIO_PIN_9
 #define CS_PORT           GPIOC
-#define CS_LOW()          HAL_GPIO_WritePin(CS_PORT, CS_PIN, GPIO_PIN_RESET)
-#define CS_HIGH()         HAL_GPIO_WritePin(CS_PORT, CS_PIN, GPIO_PIN_SET)
+#define CS_LOW()          HAL_GPIO_WritePin(CS_PORT, CS_PIN, GPIO_PIN_RESET)  // Start SPI-communicatie
+#define CS_HIGH()         HAL_GPIO_WritePin(CS_PORT, CS_PIN, GPIO_PIN_SET)    // Stop SPI-communicatie
 
-// Matrix configuration
-#define MATRIX_ROWS       4
-#define MATRIX_COLS       4
-#define BASE_NOTE         60  // Middle C
+// ================================================================
+// Knoppenmatrix configuratie (4x4 = 16 knoppen)
+// ================================================================
+// De matrix werkt met rijen en kolommen: kolom laag zetten, dan rijen lezen
+// Als een knop ingedrukt is, verbindt hij de kolom met de rij -> rij gaat laag
+#define MATRIX_ROWS       4          // 4 rijen (rij 0-3 via poort B bits 0-3)
+#define MATRIX_COLS       4          // 4 kolommen (kolom 0-3 via poort A bits 0-3)
+#define BASE_NOTE         60         // Startnoot = Middle C (MIDI nootnummer 60)
 
 /* USER CODE END PD */
 
@@ -74,7 +86,9 @@ PCD_HandleTypeDef hpcd_USB_DRD_FS;
 
 /* USER CODE BEGIN PV */
 
-// Button state tracking (16 buttons in 4x4 matrix)
+// Vorige toestand van elke knop bijhouden (16 knoppen in 4x4 matrix)
+// true = knop was ingedrukt, false = knop was losgelaten
+// Hiermee detecteren we het MOMENT van indrukken/loslaten (flank-detectie)
 static bool button_prev_state[16] = {false};
 
 /* USER CODE END PV */
@@ -113,35 +127,35 @@ int main(void)
   /* MCU Configuration--------------------------------------------------------*/
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-  HAL_Init();
+  HAL_Init();  // Initialiseer de HAL-laag (Hardware Abstraction Layer) - verplichte eerste stap
 
   /* USER CODE BEGIN Init */
 
   /* USER CODE END Init */
 
   /* Configure the system clock */
-  SystemClock_Config();
+  SystemClock_Config();  // Stel de klokfrequentie in (zie SystemClock_Config hieronder)
 
   /* USER CODE BEGIN SysInit */
 
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
-  MX_GPIO_Init();
-  MX_USB_PCD_Init();
-  MX_SPI1_Init();
+  MX_GPIO_Init();      // Initialiseer de GPIO-pinnen (CS-pin, LED, etc.)
+  MX_USB_PCD_Init();   // Initialiseer de USB-hardware van de STM32
+  MX_SPI1_Init();      // Initialiseer SPI1 (gebruikt voor communicatie met de MCP23S17)
   /* USER CODE BEGIN 2 */
 
-  // Initialize tinyUSB
+  // Initialiseer de TinyUSB-stack (softwarelaag die USB-MIDI regelt)
   tusb_init();
   tusb_hal_init();
 
-  // Wait for USB to enumerate
+  // Wacht 1 seconde zodat de computer de USB-verbinding kan herkennen en configureren
   HAL_Delay(1000);
   
-  // Initialize MCP23S17
-  HAL_Delay(10); // Short delay for MCP23S17 to power up
-  mcp23s17_init();
+  // Geef de MCP23S17 tijd om op te starten na het inschakelen
+  HAL_Delay(10);
+  mcp23s17_init();  // Configureer de MCP23S17 (richtingen, pull-ups, beginwaarden)
 
   /* USER CODE END 2 */
 
@@ -161,15 +175,16 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  while (1)
+  while (1)  // Hoofdlus: draait continu zolang het apparaat aan is
   {
-    // tinyUSB device task
+    // Verwerk alle USB-events (verbinding, data ontvangen/verzenden, etc.)
+    // MOET regelmatig aangeroepen worden, anders werkt USB niet correct
     tud_task();
 
-    // Scan button matrix
+    // Scan de 4x4 knoppenmatrix en detecteer indrukken/loslaten
     scan_matrix();
 
-    // MIDI application task
+    // Verwerk MIDI-taken: binnenkomende data lezen + LED laten knipperen
     midi_task();
 
     /* USER CODE END WHILE */
@@ -257,14 +272,16 @@ static void MX_SPI1_Init(void)
 
   /* USER CODE END SPI1_Init 1 */
   /* SPI1 parameter configuration*/
-  hspi1.Instance = SPI1;
-  hspi1.Init.Mode = SPI_MODE_MASTER;
-  hspi1.Init.Direction = SPI_DIRECTION_2LINES;
-  hspi1.Init.DataSize = SPI_DATASIZE_8BIT;
-  hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
-  hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
-  hspi1.Init.NSS = SPI_NSS_SOFT;
-  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_32;
+  // SPI (Serial Peripheral Interface) = seriële bus voor korte-afstand communicatie
+  // Wij gebruiken SPI om te communiceren met de MCP23S17 GPIO-uitbreider
+  hspi1.Instance = SPI1;                                     // Gebruik SPI-bus nummer 1
+  hspi1.Init.Mode = SPI_MODE_MASTER;                         // STM32 is de baas (master), MCP23S17 is de slaaf (slave)
+  hspi1.Init.Direction = SPI_DIRECTION_2LINES;               // Full-duplex: tegelijk zenden én ontvangen
+  hspi1.Init.DataSize = SPI_DATASIZE_8BIT;                   // Verstuur 8 bits per keer (1 byte)
+  hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;                 // Klok begint laag (SPI Mode 0)
+  hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;                     // Data geldig op eerste klokflank (SPI Mode 0)
+  hspi1.Init.NSS = SPI_NSS_SOFT;                             // CS-pin handmatig aansturen (via CS_LOW/CS_HIGH macros)
+  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_32;   // SPI-kloksnelheid = systeemklok / 32
   hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
@@ -344,27 +361,29 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);
-  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);  // CS high initially
+  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);         // PA4 (LED) begint UIT
+  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);         // PC9 (CS) begint HIGH = chip niet geselecteerd
 
-  /*Configure GPIO pin : PA4 */
+  /*Configure GPIO pin : PA4 - Ingebouwde LED (LD2) */
+  // PA4 is de groene LED op het Nucleo-board, gebruikt als USB-statuslampje
   GPIO_InitStruct.Pin = GPIO_PIN_4;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;   // Push-pull uitgang: kan actief hoog en laag rijden
+  GPIO_InitStruct.Pull = GPIO_NOPULL;           // Geen interne weerstand nodig (uitgang)
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH; // Hoge schakelsnelheid
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : PC9 (SPI CS) */
+  /*Configure GPIO pin : PC9 - Chip Select (CS) voor de MCP23S17 */
+  // CS-pin: LOW = MCP23S17 luistert, HIGH = MCP23S17 genegeerd
   GPIO_InitStruct.Pin = GPIO_PIN_9;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;   // Uitgang om CS aan te sturen
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : PC4 */
+  /*Configure GPIO pin : PC4 - Digitale ingang */
   GPIO_InitStruct.Pin = GPIO_PIN_4;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;       // Ingang: leest de spanning op de pin
+  GPIO_InitStruct.Pull = GPIO_NOPULL;           // Geen pull-up/pull-down
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
   /* USER CODE BEGIN MX_GPIO_Init_2 */
@@ -378,55 +397,73 @@ static void MX_GPIO_Init(void)
 // MCP23S17 Functions
 //--------------------------------------------------------------------+
 
+// Schrijft een waarde naar een intern register van de MCP23S17 via SPI
+// Werking: stuur 3 bytes over SPI: [controle-byte | registeradres | waarde]
 void mcp23s17_write_reg(uint8_t reg, uint8_t value)
 {
   uint8_t tx_data[3];
-  tx_data[0] = MCP23S17_ADDR | MCP23S17_WRITE; // Control byte
-  tx_data[1] = reg;                             // Register address
-  tx_data[2] = value;                           // Data
+  tx_data[0] = MCP23S17_ADDR | MCP23S17_WRITE; // Controle-byte: adres van de chip + schrijf-bit
+  tx_data[1] = reg;                             // Welk register wil je schrijven?
+  tx_data[2] = value;                           // Welke waarde wil je erin zetten?
 
-  CS_LOW();
-  HAL_SPI_Transmit(&hspi1, tx_data, 3, 100);
-  CS_HIGH();
+  CS_LOW();                                     // Activeer de chip (communicatie starten)
+  HAL_SPI_Transmit(&hspi1, tx_data, 3, 100);    // Stuur 3 bytes via SPI (timeout 100ms)
+  CS_HIGH();                                    // Deactiveer de chip (communicatie stoppen)
 }
 
+// Leest de waarde uit een intern register van de MCP23S17 via SPI
+// SPI is full-duplex: zenden en ontvangen gebeuren tegelijkertijd
+// Werking: stuur 3 bytes [controle-byte | registeradres | dummy], ontvang 3 bytes tegelijk
 uint8_t mcp23s17_read_reg(uint8_t reg)
 {
-  // Use a single TransmitReceive call for reliable full-duplex SPI
+  // Verzenddata: byte 0 = controle (adres + lees-bit), byte 1 = registeradres, byte 2 = dummy (0xFF)
   uint8_t tx_data[3] = { MCP23S17_ADDR | MCP23S17_READ, reg, 0xFF };
-  uint8_t rx_data[3] = { 0, 0, 0 };
+  uint8_t rx_data[3] = { 0, 0, 0 };  // Ontvangstbuffer (3 bytes, evenredig met verzonden bytes)
 
-  CS_LOW();
-  HAL_SPI_TransmitReceive(&hspi1, tx_data, rx_data, 3, 100);
-  CS_HIGH();
+  CS_LOW();                                                    // Activeer de chip
+  HAL_SPI_TransmitReceive(&hspi1, tx_data, rx_data, 3, 100);  // Stuur en ontvang tegelijk (full-duplex)
+  CS_HIGH();                                                   // Deactiveer de chip
 
-  // Data is in the 3rd byte (first two are dummy during address phase)
+  // De echte registerwaarde zit in het DERDE ontvangen byte
+  // (de eerste twee bytes zijn rommel die de chip stuurt terwijl hij het adres verwerkt)
   return rx_data[2];
 }
 
+// Initialiseer de MCP23S17: stel richtingen, pull-ups en beginwaarden in
+//
+// Matrixopbouw:
+//   Poort A bits 0-3 = KOLOMMEN (uitgangen) -> we sturen ze aan
+//   Poort B bits 0-3 = RIJEN    (ingangen)  -> we lezen ze af
+//
+// Hoe de matrix werkt:
+//   1. Zet één kolom LAAG, de rest HOOG
+//   2. Lees alle rijen: als een rij LAAG is, dan is de knop op die rij+kolom ingedrukt
+//   3. Rijen hebben pull-ups: standaard HOOG, bij indrukken verbinding naar de lage kolom -> rij gaat LAAG
 void mcp23s17_init(void)
 {
-  // Wait a bit for MCP23S17 to be ready
+  // Wacht zodat de MCP23S17 volledig is opgestart
   HAL_Delay(50);
   
-  // Configure Port A pins 0-3 as outputs (columns)
-  // Configure Port A pins 4-7 as inputs (not used)
+  // Poort A: bits 0-3 = uitgang (kolommen), bits 4-7 = ingang (niet gebruikt)
+  // 0xF0 = 1111 0000 in binair: bit=1 = ingang, bit=0 = uitgang
   mcp23s17_write_reg(MCP23S17_IODIRA, 0xF0);
   
-  // Configure Port B pins 0-3 as inputs (rows)
-  // Configure Port B pins 4-7 as inputs (not used)
+  // Poort B: alle bits = ingang (rijen + niet-gebruikte pinnen)
+  // 0xFF = 1111 1111 in binair: alle pinnen als ingang
   mcp23s17_write_reg(MCP23S17_IODIRB, 0xFF);
   
-  // Disable pull-ups on Port A (outputs don't need them)
+  // Poort A heeft geen pull-ups nodig (zijn uitgangen)
   mcp23s17_write_reg(MCP23S17_GPPUA, 0x00);
   
-  // Enable pull-ups on Port B rows
+  // Poort B rijen (bits 0-3) krijgen interne pull-up weerstanden
+  // Hierdoor staat een rij standaard HOOG en gaat LAAG als een knop ingedrukt wordt
   mcp23s17_write_reg(MCP23S17_GPPUB, 0x0F);
   
-  // Set all columns high initially (idle state)
+  // Alle kolommen beginnen HOOG (ruststand, geen kolom geselecteerd)
+  // 0x0F = 0000 1111: bits 0-3 HOOG
   mcp23s17_write_reg(MCP23S17_GPIOA, 0x0F);
   
-  // Small delay after init
+  // Kleine pauze om de chip te laten stabiliseren
   HAL_Delay(10);
 }
 
@@ -434,83 +471,99 @@ void mcp23s17_init(void)
 // Matrix Scanning
 //--------------------------------------------------------------------+
 
+// Scant de 4x4 knoppenmatrix en stuurt MIDI-berichten bij toestandsverandering
+//
+// Algoritme per scancyclus:
+//   Voor elke kolom (0-3):
+//     1. Zet die kolom LAAG, alle andere HOOG
+//     2. Wacht even zodat de signalen stabiliseren
+//     3. Lees de 4 rijen: rij LAAG = knop ingedrukt (door pull-up)
+//     4. Pas debounceteller aan per knop
+//     5. Als toestand veranderd: stuur Note On of Note Off
 void scan_matrix(void)
 {
   static uint32_t last_scan_ms = 0;
   
-  // Scan every 50ms for better debouncing
+  // Scan elke 50 milliseconden (te snel scannen geeft problemen met debouncen)
   if (HAL_GetTick() - last_scan_ms < 50) {
-    return;
+    return;  // Nog niet 50ms verstreken -> niets doen
   }
-  last_scan_ms = HAL_GetTick();
+  last_scan_ms = HAL_GetTick();  // Sla het tijdstip van deze scan op
 
-  // SPI sanity check: read back IODIRB (should be 0xFF if MCP23S17 is working)
+  // Controleer of de MCP23S17 nog correct werkt door IODIRB terug te lezen
+  // IODIRB moet 0xFF zijn (alles ingang) - als dat niet zo is, is er een fout
   uint8_t iodirb = mcp23s17_read_reg(MCP23S17_IODIRB);
   if (iodirb != 0xFF) {
-    // MCP23S17 not responding correctly - re-init and skip this scan
+    // MCP23S17 geeft een verkeerde waarde -> opnieuw initialiseren en scan overslaan
     mcp23s17_init();
     return;
   }
 
-  // Debounce counter for each button
+  // Debounceteller per knop: telt hoeveel keer de knop aaneengesloten hetzelfde was
+  // Doel: vermijden dat een knop meerdere keren triggert door contact-stuiter (bounce)
   static uint8_t debounce_count[16] = {0};
-  const uint8_t DEBOUNCE_THRESHOLD = 2; // Button must be stable for 2 scans
+  const uint8_t DEBOUNCE_THRESHOLD = 2; // Knop moet 2 scans stabiel zijn voor we hem accepteren
 
-  // Scan each column
+  // Loop over alle 4 kolommen
   for (uint8_t col = 0; col < MATRIX_COLS; col++)
   {
-    // Set current column low, others high
+    // Maak een patroon waarbij alleen de huidige kolom LAAG is, de rest HOOG
+    // Voorbeeld: col=1 -> ~(0000 0010) & 0x0F = 1111 1101 & 0x0F = 0000 1101
     uint8_t col_pattern = ~(1 << col) & 0x0F;
-    mcp23s17_write_reg(MCP23S17_GPIOA, col_pattern);
+    mcp23s17_write_reg(MCP23S17_GPIOA, col_pattern);  // Stel kolompatroon in
     
-    // Small delay for signals to stabilize (in microseconds if possible)
-    // Using a simple loop delay since we can't block with HAL_Delay
+    // Korte wachttijd zodat de spanning op de pinnen kan stabiliseren
+    // (HAL_Delay kan niet want die blokkeert te lang - luttele microseconden volstaan)
     for (volatile uint16_t i = 0; i < 100; i++);
     
-    // Read rows
+    // Lees de toestand van de 4 rijen (bits 0-3 van poort B)
+    // 0x0F masker = we willen alleen de onderste 4 bits
     uint8_t row_data = mcp23s17_read_reg(MCP23S17_GPIOB) & 0x0F;
     
-    // Check each row
+    // Controleer elke rij of de knop ingedrukt is
     for (uint8_t row = 0; row < MATRIX_ROWS; row++)
     {
+      // Bereken de unieke index van deze knop (0-15)
+      // Rij 0, kolom 0 = knop 0; rij 0, kolom 1 = knop 1; rij 1, kolom 0 = knop 4; enz.
       uint8_t button_index = row * MATRIX_COLS + col;
       
-      // Button is pressed when row pin is LOW (due to pull-up)
+      // Knop is ingedrukt als de bijbehorende rijbit LAAG is (dankzij pull-up logica)
+      // !(row_data & (1 << row)): als bit van de rij 0 is -> ingedrukt = true
       bool pressed = !(row_data & (1 << row));
       
-      // Debouncing logic
+      // Debounce: verhoog teller als ingedrukt, verlaag als losgelaten
       if (pressed) {
         if (debounce_count[button_index] < DEBOUNCE_THRESHOLD) {
-          debounce_count[button_index]++;
+          debounce_count[button_index]++;  // Knop stabiel ingedrukt: teller omhoog
         }
       } else {
         if (debounce_count[button_index] > 0) {
-          debounce_count[button_index]--;
+          debounce_count[button_index]--;  // Knop stabiel losgelaten: teller omlaag
         }
       }
       
-      // Update button state only when debounced
+      // Knop is pas "officieel" ingedrukt als de teller de drempel bereikt
       bool new_state = (debounce_count[button_index] >= DEBOUNCE_THRESHOLD);
       
-      // Detect button state change
+      // Flank-detectie: detecteer de OVERGANG van losgelaten naar ingedrukt en omgekeerd
       if (new_state && !button_prev_state[button_index])
       {
-        // Button just pressed - send Note On
-        uint8_t note = BASE_NOTE + button_index;
+        // Stijgende flank: knop werd NET ingedrukt -> stuur MIDI Note On
+        uint8_t note = BASE_NOTE + button_index;  // Nootnummer = 60 + knoopindex (0-15)
         send_midi_note(note, true);
-        button_prev_state[button_index] = true;
+        button_prev_state[button_index] = true;  // Sla nieuwe toestand op
       }
       else if (!new_state && button_prev_state[button_index])
       {
-        // Button just released - send Note Off
+        // Dalende flank: knop werd NET losgelaten -> stuur MIDI Note Off
         uint8_t note = BASE_NOTE + button_index;
         send_midi_note(note, false);
-        button_prev_state[button_index] = false;
+        button_prev_state[button_index] = false;  // Sla nieuwe toestand op
       }
     }
   }
   
-  // Set all columns high again (idle state)
+  // Zet alle kolommen terug HOOG na de scan (ruststand)
   mcp23s17_write_reg(MCP23S17_GPIOA, 0x0F);
 }
 
@@ -518,33 +571,42 @@ void scan_matrix(void)
 // MIDI Functions
 //--------------------------------------------------------------------+
 
+// Stuurt een MIDI Note On of Note Off bericht over USB naar de computer
+//
+// MIDI Note On bericht: [0x90 | kanaal, nootnummer, velocity]
+// MIDI Note Off bericht: [0x80 | kanaal, nootnummer, 0]
+//
+// Nootnummer 60 = Middle C, 61 = C#, 62 = D, ... 75 = D# (knop 15)
+// Velocity = hoe hard de noot gespeeld wordt (hier vast op 100)
 void send_midi_note(uint8_t note, bool on)
 {
-  // Only send if USB MIDI is connected
+  // Controleer of de USB-verbinding actief is (computer heeft het apparaat herkend)
+  // Geen verbinding = geen reden om te sturen
   if (!tud_midi_mounted()) {
     return;
   }
 
-  uint8_t cable_num = 0;
-  uint8_t channel = 0;   // MIDI channel 1
-  uint8_t velocity = 100;
-  uint8_t msg[3];
+  uint8_t cable_num = 0;   // USB MIDI kabel nummer (altijd 0 bij 1 kabel)
+  uint8_t channel = 0;     // MIDI-kanaal 0 = kanaal 1 (MIDI-kanalen zijn 0-15 intern)
+  uint8_t velocity = 100;  // Aansilagsterkte: 0=stil, 127=maximaal (100 = redelijk hard)
+  uint8_t msg[3];          // MIDI-bericht is altijd 3 bytes voor Note On/Off
 
   if (on)
   {
-    // Note On: 0x90 | channel
-    msg[0] = 0x90 | channel;
-    msg[1] = note;
-    msg[2] = velocity;
+    // Note On: statusbyte 0x90 + kanaalnummer, dan nootnummer, dan velocity
+    msg[0] = 0x90 | channel;  // 0x90 = Note On commando, | channel voegt kanaalnummer toe
+    msg[1] = note;            // Welke noot (0-127, waarbij 60 = Middle C)
+    msg[2] = velocity;        // Hoe hard (1-127, 0 wordt soms behandeld als Note Off)
   }
   else
   {
-    // Note Off: 0x80 | channel
-    msg[0] = 0x80 | channel;
-    msg[1] = note;
-    msg[2] = 0;
+    // Note Off: statusbyte 0x80 + kanaalnummer, dan nootnummer, dan velocity 0
+    msg[0] = 0x80 | channel;  // 0x80 = Note Off commando
+    msg[1] = note;            // Zelfde noot als bij Note On
+    msg[2] = 0;               // Velocity 0 bij Note Off (loslaat-snelheid)
   }
 
+  // Stuur het 3-byte MIDI-bericht via USB naar de computer
   tud_midi_stream_write(cable_num, msg, 3);
 }
 
@@ -552,22 +614,25 @@ void send_midi_note(uint8_t note, bool on)
 // MIDI Task
 //--------------------------------------------------------------------+
 
+// MIDI-taak: verwerk binnenkomende MIDI-data en stuur de LED aan als statusindicator
 void midi_task(void)
 {
-  // The MIDI interface always creates input and output port/jack descriptors
-  // regardless of these being used or not. Therefore incoming traffic should be read
-  // (possibly just discarded) to avoid the sender blocking in IO
-  uint8_t packet[4];
-  while ( tud_midi_available() ) tud_midi_packet_read(packet);
+  // Lees en gooi alle binnenkomende MIDI-pakketten weg
+  // WHY: de USB MIDI-interface heeft altijd een ingang én uitgang (zelfs als we de ingang niet gebruiken)
+  // Als we binnenkomende data NIET lezen, raakt de buffer vol en blokkeert de computer met sturen
+  uint8_t packet[4];  // MIDI USB-pakket is altijd 4 bytes (1 header + 3 data)
+  while ( tud_midi_available() ) tud_midi_packet_read(packet);  // Lees en negeer
   
-  // LED indicator: fast blink = connected, slow blink = not connected
+  // Gebruik de ingebouwde LED (PA5 = LD2 op Nucleo) als verbindingsindicator:
+  //   - Snel knipperen (elke 250ms): USB verbonden en klaar voor gebruik
+  //   - Langzaam knipperen (elke 1000ms): USB niet verbonden
   static uint32_t blink_ms = 0;
-  uint32_t blink_interval = tud_midi_mounted() ? 250 : 1000;
+  uint32_t blink_interval = tud_midi_mounted() ? 250 : 1000;  // Kies knippersnelheid op basis van verbinding
   
-  if (HAL_GetTick() - blink_ms > blink_interval)
+  if (HAL_GetTick() - blink_ms > blink_interval)  // Is het tijd om te wisselen?
   {
-    blink_ms = HAL_GetTick();
-    HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
+    blink_ms = HAL_GetTick();                     // Sla het tijdstip op
+    HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);        // Wissel de LED (aan->uit of uit->aan)
   }
 }
 
