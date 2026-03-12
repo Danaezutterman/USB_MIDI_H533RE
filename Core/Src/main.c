@@ -22,6 +22,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "tusb.h"
+#include <stdbool.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -31,6 +32,30 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+
+// MCP23S17 Register Addresses
+#define MCP23S17_IODIRA   0x00  // I/O direction A
+#define MCP23S17_IODIRB   0x01  // I/O direction B
+#define MCP23S17_GPPUA    0x0C  // Pull-up A
+#define MCP23S17_GPPUB    0x0D  // Pull-up B
+#define MCP23S17_GPIOA    0x12  // Port A
+#define MCP23S17_GPIOB    0x13  // Port B
+
+// MCP23S17 Control Byte
+#define MCP23S17_ADDR     0x40  // Hardware address (A0=A1=A2=GND)
+#define MCP23S17_WRITE    0x00
+#define MCP23S17_READ     0x01
+
+// CS Pin (PC9)
+#define CS_PIN            GPIO_PIN_9
+#define CS_PORT           GPIOC
+#define CS_LOW()          HAL_GPIO_WritePin(CS_PORT, CS_PIN, GPIO_PIN_RESET)
+#define CS_HIGH()         HAL_GPIO_WritePin(CS_PORT, CS_PIN, GPIO_PIN_SET)
+
+// Matrix configuration
+#define MATRIX_ROWS       4
+#define MATRIX_COLS       4
+#define BASE_NOTE         60  // Middle C
 
 /* USER CODE END PD */
 
@@ -49,6 +74,10 @@ PCD_HandleTypeDef hpcd_USB_DRD_FS;
 
 /* USER CODE BEGIN PV */
 
+// Button state tracking (16 buttons in 4x4 matrix)
+static bool button_state[16] = {false};
+static bool button_prev_state[16] = {false};
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -59,6 +88,11 @@ static void MX_SPI1_Init(void);
 /* USER CODE BEGIN PFP */
 extern void tusb_hal_init(void);
 void midi_task(void);
+void mcp23s17_write_reg(uint8_t reg, uint8_t value);
+uint8_t mcp23s17_read_reg(uint8_t reg);
+void mcp23s17_init(void);
+void scan_matrix(void);
+void send_midi_note(uint8_t note, bool on);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -103,6 +137,13 @@ int main(void)
   tusb_init();
   tusb_hal_init();
 
+  // Wait for USB to enumerate
+  HAL_Delay(1000);
+  
+  // Initialize MCP23S17
+  HAL_Delay(10); // Short delay for MCP23S17 to power up
+  mcp23s17_init();
+
   /* USER CODE END 2 */
 
   /* Initialize USER push-button, will be used to trigger an interrupt each time it's pressed.*/
@@ -125,6 +166,9 @@ int main(void)
   {
     // tinyUSB device task
     tud_task();
+
+    // Scan button matrix
+    scan_matrix();
 
     // MIDI application task
     midi_task();
@@ -302,6 +346,7 @@ static void MX_GPIO_Init(void)
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);  // CS high initially
 
   /*Configure GPIO pin : PA4 */
   GPIO_InitStruct.Pin = GPIO_PIN_4;
@@ -309,6 +354,13 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : PC9 (SPI CS) */
+  GPIO_InitStruct.Pin = GPIO_PIN_9;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
   /*Configure GPIO pin : PC4 */
   GPIO_InitStruct.Pin = GPIO_PIN_4;
@@ -324,6 +376,174 @@ static void MX_GPIO_Init(void)
 /* USER CODE BEGIN 4 */
 
 //--------------------------------------------------------------------+
+// MCP23S17 Functions
+//--------------------------------------------------------------------+
+
+void mcp23s17_write_reg(uint8_t reg, uint8_t value)
+{
+  uint8_t tx_data[3];
+  tx_data[0] = MCP23S17_ADDR | MCP23S17_WRITE; // Control byte
+  tx_data[1] = reg;                             // Register address
+  tx_data[2] = value;                           // Data
+
+  CS_LOW();
+  HAL_SPI_Transmit(&hspi1, tx_data, 3, 100);
+  CS_HIGH();
+}
+
+uint8_t mcp23s17_read_reg(uint8_t reg)
+{
+  uint8_t tx_data[2];
+  uint8_t rx_data;
+  
+  tx_data[0] = MCP23S17_ADDR | MCP23S17_READ; // Control byte
+  tx_data[1] = reg;                            // Register address
+
+  CS_LOW();
+  HAL_SPI_Transmit(&hspi1, tx_data, 2, 100);
+  HAL_SPI_Receive(&hspi1, &rx_data, 1, 100);
+  CS_HIGH();
+
+  return rx_data;
+}
+
+void mcp23s17_init(void)
+{
+  // Wait a bit for MCP23S17 to be ready
+  HAL_Delay(50);
+  
+  // Configure Port A pins 0-3 as outputs (columns)
+  // Configure Port A pins 4-7 as inputs (not used)
+  mcp23s17_write_reg(MCP23S17_IODIRA, 0xF0);
+  
+  // Configure Port B pins 0-3 as inputs (rows)
+  // Configure Port B pins 4-7 as inputs (not used)
+  mcp23s17_write_reg(MCP23S17_IODIRB, 0xFF);
+  
+  // Disable pull-ups on Port A (outputs don't need them)
+  mcp23s17_write_reg(MCP23S17_GPPUA, 0x00);
+  
+  // Enable pull-ups on Port B rows
+  mcp23s17_write_reg(MCP23S17_GPPUB, 0x0F);
+  
+  // Set all columns high initially (idle state)
+  mcp23s17_write_reg(MCP23S17_GPIOA, 0x0F);
+  
+  // Small delay after init
+  HAL_Delay(10);
+}
+
+//--------------------------------------------------------------------+
+// Matrix Scanning
+//--------------------------------------------------------------------+
+
+void scan_matrix(void)
+{
+  static uint32_t last_scan_ms = 0;
+  
+  // Scan every 50ms for better debouncing
+  if (HAL_GetTick() - last_scan_ms < 50) {
+    return;
+  }
+  last_scan_ms = HAL_GetTick();
+
+  // Debounce counter for each button
+  static uint8_t debounce_count[16] = {0};
+  const uint8_t DEBOUNCE_THRESHOLD = 2; // Button must be stable for 2 scans
+
+  // Scan each column
+  for (uint8_t col = 0; col < MATRIX_COLS; col++)
+  {
+    // Set current column low, others high
+    uint8_t col_pattern = ~(1 << col) & 0x0F;
+    mcp23s17_write_reg(MCP23S17_GPIOA, col_pattern);
+    
+    // Small delay for signals to stabilize (in microseconds if possible)
+    // Using a simple loop delay since we can't block with HAL_Delay
+    for (volatile uint16_t i = 0; i < 100; i++);
+    
+    // Read rows
+    uint8_t row_data = mcp23s17_read_reg(MCP23S17_GPIOB) & 0x0F;
+    
+    // Check each row
+    for (uint8_t row = 0; row < MATRIX_ROWS; row++)
+    {
+      uint8_t button_index = row * MATRIX_COLS + col;
+      
+      // Button is pressed when row pin is LOW (due to pull-up)
+      bool pressed = !(row_data & (1 << row));
+      
+      // Debouncing logic
+      if (pressed) {
+        if (debounce_count[button_index] < DEBOUNCE_THRESHOLD) {
+          debounce_count[button_index]++;
+        }
+      } else {
+        if (debounce_count[button_index] > 0) {
+          debounce_count[button_index]--;
+        }
+      }
+      
+      // Update button state only when debounced
+      bool new_state = (debounce_count[button_index] >= DEBOUNCE_THRESHOLD);
+      
+      // Detect button state change
+      if (new_state && !button_prev_state[button_index])
+      {
+        // Button just pressed - send Note On
+        uint8_t note = BASE_NOTE + button_index;
+        send_midi_note(note, true);
+        button_prev_state[button_index] = true;
+      }
+      else if (!new_state && button_prev_state[button_index])
+      {
+        // Button just released - send Note Off
+        uint8_t note = BASE_NOTE + button_index;
+        send_midi_note(note, false);
+        button_prev_state[button_index] = false;
+      }
+    }
+  }
+  
+  // Set all columns high again (idle state)
+  mcp23s17_write_reg(MCP23S17_GPIOA, 0x0F);
+}
+
+//--------------------------------------------------------------------+
+// MIDI Functions
+//--------------------------------------------------------------------+
+
+void send_midi_note(uint8_t note, bool on)
+{
+  // Only send if USB MIDI is connected
+  if (!tud_midi_mounted()) {
+    return;
+  }
+
+  uint8_t cable_num = 0;
+  uint8_t channel = 0;   // MIDI channel 1
+  uint8_t velocity = 100;
+  uint8_t msg[3];
+
+  if (on)
+  {
+    // Note On: 0x90 | channel
+    msg[0] = 0x90 | channel;
+    msg[1] = note;
+    msg[2] = velocity;
+  }
+  else
+  {
+    // Note Off: 0x80 | channel
+    msg[0] = 0x80 | channel;
+    msg[1] = note;
+    msg[2] = 0;
+  }
+
+  tud_midi_stream_write(cable_num, msg, 3);
+}
+
+//--------------------------------------------------------------------+
 // MIDI Task
 //--------------------------------------------------------------------+
 
@@ -334,39 +554,15 @@ void midi_task(void)
   // (possibly just discarded) to avoid the sender blocking in IO
   uint8_t packet[4];
   while ( tud_midi_available() ) tud_midi_packet_read(packet);
-
-  // Example: Send a Note On message every second
-  static uint32_t start_ms = 0;
-  static bool note_on = false;
-
-  // Blink every 1000 ms
-  if (HAL_GetTick() - start_ms > 1000)
+  
+  // LED indicator: fast blink = connected, slow blink = not connected
+  static uint32_t blink_ms = 0;
+  uint32_t blink_interval = tud_midi_mounted() ? 250 : 1000;
+  
+  if (HAL_GetTick() - blink_ms > blink_interval)
   {
-    start_ms = HAL_GetTick();
-
-    // Toggle LED
+    blink_ms = HAL_GetTick();
     HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
-
-    // Send MIDI Note On/Off
-    uint8_t cable_num = 0; // MIDI jack associated with USB endpoint
-    uint8_t channel = 0;   // 0 for channel 1
-    uint8_t note = 60;     // Middle C
-    uint8_t velocity = 100;
-
-    if (note_on)
-    {
-      // Note Off: 0x80 is channel message, 0x80 | channel is Note Off on channel 1
-      uint8_t note_off[3] = { 0x80 | channel, note, 0 };
-      tud_midi_stream_write(cable_num, note_off, 3);
-      note_on = false;
-    }
-    else
-    {
-      // Note On: 0x90 is channel message, 0x90 | channel is Note On on channel 1
-      uint8_t note_on_msg[3] = { 0x90 | channel, note, velocity };
-      tud_midi_stream_write(cable_num, note_on_msg, 3);
-      note_on = true;
-    }
   }
 }
 
