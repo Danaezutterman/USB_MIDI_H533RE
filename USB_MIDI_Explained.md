@@ -19,7 +19,7 @@ USB_MIDI2/
 │       ├── tusb_port.c             ← Platform glue between TinyUSB and STM32 HAL
 │       ├── stm32h5xx_it.c          ← Interrupt handlers (USB IRQ lives here)
 │       └── stm32h5xx_hal_msp.c     ← Low-level peripheral init (USB clocks, power, IRQ)
-└── Middlewares/tinyusb/            ← TinyUSB library (handles all USB protocol details)
+└── lib/tinyusb/                    ← TinyUSB library (handles all USB protocol details)
 ```
 
 ---

@@ -4,27 +4,20 @@ This project has been configured to use tinyUSB as a USB MIDI device on the NUCL
 
 ## Getting Started
 
-### Cloning the Repository
+### Repository Structure
 
-This project uses TinyUSB as a Git submodule. When cloning, use one of these methods:
+This project includes TinyUSB as a **local copy** in the `lib/tinyusb/` directory. No git submodule setup is required.
 
-**Option 1: Clone with submodules automatically**
+**Note:** TinyUSB is no longer a Git submodule. The entire library is included in the repository, so a standard `git clone` will retrieve everything:
 ```bash
-git clone --recursive <repository-url>
+git clone <repository-url>
 ```
-
-**Option 2: If you already cloned without `--recursive`**
-```bash
-git submodule update --init --recursive
-```
-
-This will fetch TinyUSB into the `Middlewares/tinyusb/` directory at the correct version.
 
 ## What Was Added
 
 ### 1. TinyUSB Library
-- Located in `Middlewares/tinyusb/`
-- Cloned from the official tinyUSB repository
+- Located in `lib/tinyusb/`
+- Local copy of the official tinyUSB repository for guaranteed stability and offline builds
 
 ### 2. Configuration Files
 - **Core/Inc/tusb_config.h**: TinyUSB configuration

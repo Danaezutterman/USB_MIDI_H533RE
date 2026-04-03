@@ -84,12 +84,24 @@ SPI_HandleTypeDef hspi1;
 
 PCD_HandleTypeDef hpcd_USB_DRD_FS;
 
+ADC_HandleTypeDef hadc1;
+
+TIM_HandleTypeDef htim6;
+
+DMA_HandleTypeDef handle_GPDMA1_Channel0;
+
 /* USER CODE BEGIN PV */
 
 // Vorige toestand van elke knop bijhouden (16 knoppen in 4x4 matrix)
 // true = knop was ingedrukt, false = knop was losgelaten
 // Hiermee detecteren we het MOMENT van indrukken/loslaten (flank-detectie)
 static bool button_prev_state[16] = {false};
+
+// ADC buffer voor DMA (1 waarde van 8-bits ADC)
+static uint8_t adc_value = 0;
+
+// Vorige MIDI CC waarde bijhouden (voor aan te zien of waarde is veranderd)
+static uint8_t prev_midi_cc_value = 255;
 
 /* USER CODE END PV */
 
@@ -98,6 +110,8 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USB_PCD_Init(void);
 static void MX_SPI1_Init(void);
+static void MX_ADC1_Init(void);
+static void MX_GPDMA1_Init(void);
 /* USER CODE BEGIN PFP */
 extern void tusb_hal_init(void);
 void midi_task(void);
@@ -105,7 +119,9 @@ void mcp23s17_write_reg(uint8_t reg, uint8_t value);
 uint8_t mcp23s17_read_reg(uint8_t reg);
 void mcp23s17_init(void);
 void scan_matrix(void);
+void scan_potentiometer(void);
 void send_midi_note(uint8_t note, bool on);
+void send_midi_cc(uint8_t controller, uint8_t value);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -144,6 +160,7 @@ int main(void)
   MX_GPIO_Init();      // Initialiseer de GPIO-pinnen (CS-pin, LED, etc.)
   MX_USB_PCD_Init();   // Initialiseer de USB-hardware van de STM32
   MX_SPI1_Init();      // Initialiseer SPI1 (gebruikt voor communicatie met de MCP23S17)
+  MX_ADC1_Init();      // Initialiseer ADC1 (potentiometer op PA1)
   /* USER CODE BEGIN 2 */
 
   // Initialiseer de TinyUSB-stack (softwarelaag die USB-MIDI regelt)
@@ -183,6 +200,9 @@ int main(void)
 
     // Scan de 4x4 knoppenmatrix en detecteer indrukken/loslaten
     scan_matrix();
+    
+    // Scan de potentiometer en stuur MIDI CC waarde
+    scan_potentiometer();
 
     // Verwerk MIDI-taken: binnenkomende data lezen + LED laten knipperen
     midi_task();
@@ -389,6 +409,146 @@ static void MX_GPIO_Init(void)
   /* USER CODE BEGIN MX_GPIO_Init_2 */
 
   /* USER CODE END MX_GPIO_Init_2 */
+}
+
+/**
+  * @brief ADC1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_ADC1_Init(void)
+{
+  /* USER CODE BEGIN ADC1_Init 0 */
+
+  /* USER CODE END ADC1_Init 0 */
+
+  ADC_ChannelConfTypeDef sConfig = {0};
+
+  /* USER CODE BEGIN ADC1_Init 1 */
+
+  /* USER CODE END ADC1_Init 1 */
+
+  /* Configure the global features of the ADC (Clock, Resolution, Data Alignment and number of conversion) */
+  hadc1.Instance = ADC1;
+  hadc1.Init.ClockPrescaler = ADC_CLOCK_ASYNC_DIV1;
+  hadc1.Init.Resolution = ADC_RESOLUTION_8B;
+  hadc1.Init.GainCompensation = 0;
+  hadc1.Init.ScanConvMode = ADC_SCAN_DISABLE;
+  hadc1.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
+  hadc1.Init.LowPowerAutoWait = DISABLE;
+  hadc1.Init.LowPowerAutoPowerOff = DISABLE;
+  hadc1.Init.ContinuousConvMode = DISABLE;
+  hadc1.Init.NbrOfConversion = 1;
+  hadc1.Init.DiscontinuousConvMode = DISABLE;
+  hadc1.Init.ExternalTrigConv = ADC_EXTERNALTRIG_T6_TRGO;
+  hadc1.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_RISING;
+  hadc1.Init.DMAContinuousRequests = ENABLE;
+  hadc1.Init.Overrun = ADC_OVR_DATA_OVERWRITTEN;
+  hadc1.Init.OversamplingMode = DISABLE;
+  if (HAL_ADC_Init(&hadc1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /* Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time. */
+  sConfig.Channel = ADC_CHANNEL_1;
+  sConfig.Rank = ADC_REGULAR_RANK_1;
+  sConfig.SamplingTime = ADC_SAMPLETIME_24CYCLES_5;
+  sConfig.SingleDiff = ADC_SINGLE_ENDED;
+  sConfig.OffsetNumber = ADC_OFFSET_NONE;
+  sConfig.Offset = 0;
+  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /* USER CODE BEGIN ADC1_Init 2 */
+
+  /* USER CODE END ADC1_Init 2 */
+}
+
+/**
+  * @brief TIM6 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM6_Init(void)
+{
+  /* USER CODE BEGIN TIM6_Init 0 */
+
+  /* USER CODE END TIM6_Init 0 */
+
+  TIM_MasterConfigTypeDef sMasterConfig = {0};
+
+  /* USER CODE BEGIN TIM6_Init 1 */
+
+  /* USER CODE END TIM6_Init 1 */
+
+  htim6.Instance = TIM6;
+  htim6.Init.Prescaler = 255;
+  htim6.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim6.Init.Period = 89;
+  htim6.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim6.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim6) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_UPDATE;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim6, &sMasterConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /* USER CODE BEGIN TIM6_Init 2 */
+
+  /* USER CODE END TIM6_Init 2 */
+}
+
+/**
+  * @brief GPDMA1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_GPDMA1_Init(void)
+{
+  /* USER CODE BEGIN GPDMA1_Init 0 */
+
+  /* USER CODE END GPDMA1_Init 0 */
+
+  /* Peripheral clock enable */
+  __HAL_RCC_GPDMA1_CLK_ENABLE();
+
+  /* GPDMA1 interrupt Init */
+  /* EXTI line0 interrupt */
+  HAL_NVIC_SetPriority(GPDMA1_Channel0_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(GPDMA1_Channel0_IRQn);
+
+  /* USER CODE BEGIN GPDMA1_Init 1 */
+
+  /* USER CODE END GPDMA1_Init 1 */
+
+  handle_GPDMA1_Channel0.Instance = GPDMA1_Channel0;
+  handle_GPDMA1_Channel0.InitLinkedList.Priority = DMA_LOW_PRIORITY;
+  handle_GPDMA1_Channel0.InitLinkedList.LinkStepMode = DMA_LSM_FULL_EXECUTION;
+  handle_GPDMA1_Channel0.InitLinkedList.LinkAllocatedPort = DMA_PORT_0;
+  handle_GPDMA1_Channel0.InitLinkedList.TransferEventMode = DMA_TCEM_BLOCK_TRANSFER;
+  handle_GPDMA1_Channel0.InitLinkedList.LinearAddress = 0;
+  if (HAL_DMAEx_List_Init(&handle_GPDMA1_Channel0) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  if (HAL_DMA_ConfigChannelAttributes(&handle_GPDMA1_Channel0, DMA_CHANNEL_NPRIV) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /* USER CODE BEGIN GPDMA1_Init 2 */
+
+  /* USER CODE END GPDMA1_Init 2 */
 }
 
 /* USER CODE BEGIN 4 */
@@ -608,6 +768,63 @@ void send_midi_note(uint8_t note, bool on)
 
   // Stuur het 3-byte MIDI-bericht via USB naar de computer
   tud_midi_stream_write(cable_num, msg, 3);
+}
+
+// Stuurt een MIDI Control Change (CC) bericht over USB naar de computer
+// Gebruikt voor analoge waarden zoals volume, pan, filter, etc.
+//
+// MIDI CC bericht: [0xB0 | kanaal, controller, waarde]
+// Controller 7 = volume, 1 = modulation wheel, 64 = sustain pedal, etc.
+void send_midi_cc(uint8_t controller, uint8_t value)
+{
+  // Controleer of de USB-verbinding actief is
+  if (!tud_midi_mounted()) {
+    return;
+  }
+
+  uint8_t cable_num = 0;  // USB MIDI kabel nummer
+  uint8_t channel = 0;    // MIDI-kanaal 0 = kanaal 1
+  uint8_t msg[3];
+
+  msg[0] = 0xB0 | channel;  // 0xB0 = Control Change commando
+  msg[1] = controller;       // Welke controller (0-119)
+  msg[2] = value;            // Waarde (0-127)
+
+  // Stuur het 3-byte MIDI-bericht via USB naar de computer
+  tud_midi_stream_write(cable_num, msg, 3);
+}
+
+//--------------------------------------------------------------------+
+// Potentiometer Scanning
+//--------------------------------------------------------------------+
+
+// Scant de potentiometer (ADC op PA1) en stuurt MIDI CC waarde
+// De ADC wordt via DMA continu gesampeld, dus adc_value is altijd actueel
+void scan_potentiometer(void)
+{
+  // Scan elke 50 milliseconden (zodat wijzigingen maar 1x per 50ms worden gestuurd)
+  static uint32_t last_scan_ms = 0;
+  
+  if (HAL_GetTick() - last_scan_ms < 50) {
+    return;  // Nog niet 50ms verstreken -> niets doen
+  }
+  last_scan_ms = HAL_GetTick();
+
+  // Controleer of de waarde is veranderd door hysterese te gebruiken
+  // Dit voorkomt dat we MIDI-berichten sturen voor kleine ruis-fluctuaties
+  // (adc_value is 0-255, dus ~1% hysterese = ongeveer 2-3 units)
+  int16_t difference = (int16_t)adc_value - (int16_t)prev_midi_cc_value;
+  
+  if (difference > 2 || difference < -2)  // Waarde is meer dan 2 units veranderd
+  {
+    prev_midi_cc_value = adc_value;
+    
+    // Stuur MIDI CC controller 7 (volume) met de potentiometerwaarde
+    // adc_value is 0-255, MIDI CC is 0-127, dus delen door 2
+    uint8_t midi_value = adc_value >> 1;  // Bit shift right = delen door 2
+    
+    send_midi_cc(7, midi_value);  // Controller 7 = volume
+  }
 }
 
 //--------------------------------------------------------------------+

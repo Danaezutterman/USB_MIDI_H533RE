@@ -32,8 +32,8 @@ extern "C" {
 #define CFG_TUSB_OS           OPT_OS_NONE
 #endif
 
-// CFG_TUSB_RHPORT0_MODE is defined to OPT_MODE_DEVICE for device mode
-#define CFG_TUSB_RHPORT0_MODE   OPT_MODE_DEVICE
+// RHPort 0 in device mode, explicit full-speed operation
+#define CFG_TUSB_RHPORT0_MODE   (OPT_MODE_DEVICE | BOARD_TUD_MAX_SPEED)
 
 // CFG_TUSB_DEBUG for debugging (0 = no debug, 1 = error, 2 = warning, 3 = info)
 #ifndef CFG_TUSB_DEBUG

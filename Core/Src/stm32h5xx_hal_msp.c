@@ -57,6 +57,11 @@
 /* USER CODE BEGIN 0 */
 
 /* USER CODE END 0 */
+
+/* External variables --------------------------------------------------------*/
+extern ADC_HandleTypeDef hadc1;
+extern TIM_HandleTypeDef htim6;
+extern DMA_HandleTypeDef handle_GPDMA1_Channel0;
 /**
   * Initializes the Global MSP.
   */
@@ -154,6 +159,54 @@ void HAL_SPI_MspDeInit(SPI_HandleTypeDef* hspi)
 }
 
 /**
+  * @brief ADC MSP Initialization
+  * This function configures the hardware resources used in this example
+  * @param hadc: ADC handle pointer
+  * @retval None
+  */
+void HAL_ADC_MspInit(ADC_HandleTypeDef* hadc)
+{
+  GPIO_InitTypeDef GPIO_InitStruct = {0};
+  RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = {0};
+
+  if(hadc->Instance==ADC1)
+  {
+    PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_ADC12;
+    PeriphClkInitStruct.Adc12ClockSelection = RCC_ADC12CLKSOURCE_HSI;
+    if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
+    {
+      Error_Handler();
+    }
+
+    __HAL_RCC_ADC12_CLK_ENABLE();
+    __HAL_RCC_GPIOA_CLK_ENABLE();
+
+    GPIO_InitStruct.Pin = GPIO_PIN_1;
+    GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+    handle_GPDMA1_Channel0.Instance = GPDMA1_Channel0;
+    HAL_DMA_Init(&handle_GPDMA1_Channel0);
+    __HAL_LINKDMA(hadc, DMA_Handle, handle_GPDMA1_Channel0);
+  }
+}
+
+/**
+  * @brief TIM_Base MSP Initialization
+  * This function configures the hardware resources used in this example
+  * @param htim_base: TIM handle pointer
+  * @retval None
+  */
+void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* htim_base)
+{
+  if(htim_base->Instance==TIM6)
+  {
+    __HAL_RCC_TIM6_CLK_ENABLE();
+  }
+}
+
+/**
   * @brief PCD MSP Initialization
   * This function configures the hardware resources used in this example
   * @param hpcd: PCD handle pointer
@@ -161,6 +214,7 @@ void HAL_SPI_MspDeInit(SPI_HandleTypeDef* hspi)
   */
 void HAL_PCD_MspInit(PCD_HandleTypeDef* hpcd)
 {
+  GPIO_InitTypeDef GPIO_InitStruct = {0};
   RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = {0};
   if(hpcd->Instance==USB_DRD_FS)
   {
@@ -181,6 +235,19 @@ void HAL_PCD_MspInit(PCD_HandleTypeDef* hpcd)
     HAL_PWREx_EnableVddUSB();
     /* Peripheral clock enable */
     __HAL_RCC_USB_CLK_ENABLE();
+
+    __HAL_RCC_GPIOA_CLK_ENABLE();
+    /**USB_DRD_FS GPIO Configuration
+    PA11     ------> USB_DM
+    PA12     ------> USB_DP
+    */
+    GPIO_InitStruct.Pin = GPIO_PIN_11|GPIO_PIN_12;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+    GPIO_InitStruct.Alternate = GPIO_AF10_USB;
+    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
     /* USB_DRD_FS interrupt Init */
     HAL_NVIC_SetPriority(USB_DRD_FS_IRQn, 0, 0);
     HAL_NVIC_EnableIRQ(USB_DRD_FS_IRQn);
@@ -207,6 +274,12 @@ void HAL_PCD_MspDeInit(PCD_HandleTypeDef* hpcd)
     /* USER CODE END USB_DRD_FS_MspDeInit 0 */
     /* Peripheral clock disable */
     __HAL_RCC_USB_CLK_DISABLE();
+
+    /**USB_DRD_FS GPIO Configuration
+    PA11     ------> USB_DM
+    PA12     ------> USB_DP
+    */
+    HAL_GPIO_DeInit(GPIOA, GPIO_PIN_11|GPIO_PIN_12);
 
     /* USB_DRD_FS interrupt DeInit */
     HAL_NVIC_DisableIRQ(USB_DRD_FS_IRQn);
