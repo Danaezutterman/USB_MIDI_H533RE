@@ -79,8 +79,14 @@
 /* Private variables ---------------------------------------------------------*/
 
 COM_InitTypeDef BspCOMInit;
+ADC_HandleTypeDef hadc1;
+DMA_NodeTypeDef Node_GPDMA1_Channel0;
+DMA_QListTypeDef List_GPDMA1_Channel0;
+DMA_HandleTypeDef handle_GPDMA1_Channel0;
 
 SPI_HandleTypeDef hspi1;
+
+TIM_HandleTypeDef htim6;
 
 PCD_HandleTypeDef hpcd_USB_DRD_FS;
 
@@ -91,11 +97,24 @@ PCD_HandleTypeDef hpcd_USB_DRD_FS;
 // Hiermee detecteren we het MOMENT van indrukken/loslaten (flank-detectie)
 static bool button_prev_state[16] = {false};
 
+// ADC-buffers voor potentiometers (2 kanalen)
+// PAO (ADC_CHANNEL_0) -> potentiometer 1 -> MIDI CC #10
+// PA1 (ADC_CHANNEL_1) -> potentiometer 2 -> MIDI CC #11
+static uint8_t adc_buffer[2] = {0, 0};
+static uint8_t adc_prev[2] = {255, 255};
+
+// Hysterese for potentiometers: waarde moet minstens 5 veranderen voor update
+// Dit filtert kleine ruis uit
+const uint8_t ADC_HYSTERESIS = 5;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
+static void MX_GPDMA1_Init(void);
+static void MX_ADC1_Init(void);
+static void MX_TIM6_Init(void);
 static void MX_USB_PCD_Init(void);
 static void MX_SPI1_Init(void);
 /* USER CODE BEGIN PFP */
@@ -106,6 +125,8 @@ uint8_t mcp23s17_read_reg(uint8_t reg);
 void mcp23s17_init(void);
 void scan_matrix(void);
 void send_midi_note(uint8_t note, bool on);
+void handle_potentiometers(void);
+void send_midi_cc(uint8_t controller, uint8_t value);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -127,23 +148,26 @@ int main(void)
   /* MCU Configuration--------------------------------------------------------*/
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-  HAL_Init();  // Initialiseer de HAL-laag (Hardware Abstraction Layer) - verplichte eerste stap
+  HAL_Init();
 
   /* USER CODE BEGIN Init */
 
   /* USER CODE END Init */
 
   /* Configure the system clock */
-  SystemClock_Config();  // Stel de klokfrequentie in (zie SystemClock_Config hieronder)
+  SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
 
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
-  MX_GPIO_Init();      // Initialiseer de GPIO-pinnen (CS-pin, LED, etc.)
-  MX_USB_PCD_Init();   // Initialiseer de USB-hardware van de STM32
-  MX_SPI1_Init();      // Initialiseer SPI1 (gebruikt voor communicatie met de MCP23S17)
+  MX_GPIO_Init();
+  MX_GPDMA1_Init();
+  MX_ADC1_Init();
+  MX_TIM6_Init();
+	MX_USB_PCD_Init();
+  MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
 
   // Initialiseer de TinyUSB-stack (softwarelaag die USB-MIDI regelt)
@@ -153,9 +177,14 @@ int main(void)
   // Wacht 1 seconde zodat de computer de USB-verbinding kan herkennen en configureren
   HAL_Delay(1000);
   
-  // Geef de MCP23S17 tijd om op te starten na het inschakelen
-  HAL_Delay(10);
-  mcp23s17_init();  // Configureer de MCP23S17 (richtingen, pull-ups, beginwaarden)
+  // Initialiseer de MCP23S17: stel richtingen, pull-ups en beginwaarden in
+  mcp23s17_init();
+
+  // Start de ADC DMA conversie (voortdurend lezen van kanalen PA0 en PA1)
+  HAL_ADC_Start_DMA(&hadc1, (uint32_t*)adc_buffer, 2);
+  
+  // Start Timer6: trigger voor ADC met vast interval (~1kHz stemupling)
+  HAL_TIM_Base_Start(&htim6);
 
   /* USER CODE END 2 */
 
@@ -183,6 +212,9 @@ int main(void)
 
     // Scan de 4x4 knoppenmatrix en detecteer indrukken/loslaten
     scan_matrix();
+
+    // Lees potentiometers en stuur MIDI CC's
+    handle_potentiometers();
 
     // Verwerk MIDI-taken: binnenkomende data lezen + LED laten knipperen
     midi_task();
@@ -223,9 +255,9 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLL1_SOURCE_CSI;
   RCC_OscInitStruct.PLL.PLLM = 1;
-  RCC_OscInitStruct.PLL.PLLN = 129;
+  RCC_OscInitStruct.PLL.PLLN = 32;
   RCC_OscInitStruct.PLL.PLLP = 2;
-  RCC_OscInitStruct.PLL.PLLQ = 2;
+  RCC_OscInitStruct.PLL.PLLQ = 3;
   RCC_OscInitStruct.PLL.PLLR = 2;
   RCC_OscInitStruct.PLL.PLLRGE = RCC_PLL1_VCIRANGE_2;
   RCC_OscInitStruct.PLL.PLLVCOSEL = RCC_PLL1_VCORANGE_WIDE;
@@ -257,6 +289,103 @@ void SystemClock_Config(void)
 }
 
 /**
+  * @brief ADC1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_ADC1_Init(void)
+{
+
+  /* USER CODE BEGIN ADC1_Init 0 */
+
+  /* USER CODE END ADC1_Init 0 */
+
+  ADC_ChannelConfTypeDef sConfig = {0};
+
+  /* USER CODE BEGIN ADC1_Init 1 */
+
+  /* USER CODE END ADC1_Init 1 */
+
+  /** Common config
+  */
+  hadc1.Instance = ADC1;
+  hadc1.Init.ClockPrescaler = ADC_CLOCK_ASYNC_DIV1;
+  hadc1.Init.Resolution = ADC_RESOLUTION_8B;
+  hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
+  hadc1.Init.ScanConvMode = ADC_SCAN_ENABLE;
+  hadc1.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
+  hadc1.Init.LowPowerAutoWait = DISABLE;
+  hadc1.Init.ContinuousConvMode = DISABLE;
+  hadc1.Init.NbrOfConversion = 2;
+  hadc1.Init.DiscontinuousConvMode = DISABLE;
+  hadc1.Init.ExternalTrigConv = ADC_EXTERNALTRIG_T6_TRGO;
+  hadc1.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_RISING;
+  hadc1.Init.DMAContinuousRequests = ENABLE;
+  hadc1.Init.SamplingMode = ADC_SAMPLING_MODE_NORMAL;
+  hadc1.Init.Overrun = ADC_OVR_DATA_PRESERVED;
+  hadc1.Init.OversamplingMode = DISABLE;
+  if (HAL_ADC_Init(&hadc1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /** Configure Regular Channel
+  */
+  sConfig.Channel = ADC_CHANNEL_0;
+  sConfig.Rank = ADC_REGULAR_RANK_1;
+  sConfig.SamplingTime = ADC_SAMPLETIME_24CYCLES_5;
+  sConfig.SingleDiff = ADC_SINGLE_ENDED;
+  sConfig.OffsetNumber = ADC_OFFSET_NONE;
+  sConfig.Offset = 0;
+  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /** Configure Regular Channel
+  */
+  sConfig.Channel = ADC_CHANNEL_1;
+  sConfig.Rank = ADC_REGULAR_RANK_2;
+  sConfig.SamplingTime = ADC_SAMPLETIME_2CYCLES_5;
+  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN ADC1_Init 2 */
+
+  /* USER CODE END ADC1_Init 2 */
+
+}
+
+/**
+  * @brief GPDMA1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_GPDMA1_Init(void)
+{
+
+  /* USER CODE BEGIN GPDMA1_Init 0 */
+
+  /* USER CODE END GPDMA1_Init 0 */
+
+  /* Peripheral clock enable */
+  __HAL_RCC_GPDMA1_CLK_ENABLE();
+
+  /* GPDMA1 interrupt Init */
+    HAL_NVIC_SetPriority(GPDMA1_Channel0_IRQn, 0, 0);
+    HAL_NVIC_EnableIRQ(GPDMA1_Channel0_IRQn);
+
+  /* USER CODE BEGIN GPDMA1_Init 1 */
+
+  /* USER CODE END GPDMA1_Init 1 */
+  /* USER CODE BEGIN GPDMA1_Init 2 */
+
+  /* USER CODE END GPDMA1_Init 2 */
+
+}
+
+/**
   * @brief SPI1 Initialization Function
   * @param None
   * @retval None
@@ -272,16 +401,14 @@ static void MX_SPI1_Init(void)
 
   /* USER CODE END SPI1_Init 1 */
   /* SPI1 parameter configuration*/
-  // SPI (Serial Peripheral Interface) = seriële bus voor korte-afstand communicatie
-  // Wij gebruiken SPI om te communiceren met de MCP23S17 GPIO-uitbreider
-  hspi1.Instance = SPI1;                                     // Gebruik SPI-bus nummer 1
-  hspi1.Init.Mode = SPI_MODE_MASTER;                         // STM32 is de baas (master), MCP23S17 is de slaaf (slave)
-  hspi1.Init.Direction = SPI_DIRECTION_2LINES;               // Full-duplex: tegelijk zenden én ontvangen
-  hspi1.Init.DataSize = SPI_DATASIZE_8BIT;                   // Verstuur 8 bits per keer (1 byte)
-  hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;                 // Klok begint laag (SPI Mode 0)
-  hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;                     // Data geldig op eerste klokflank (SPI Mode 0)
-  hspi1.Init.NSS = SPI_NSS_SOFT;                             // CS-pin handmatig aansturen (via CS_LOW/CS_HIGH macros)
-  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_32;   // SPI-kloksnelheid = systeemklok / 32
+  hspi1.Instance = SPI1;
+  hspi1.Init.Mode = SPI_MODE_MASTER;
+  hspi1.Init.Direction = SPI_DIRECTION_2LINES;
+  hspi1.Init.DataSize = SPI_DATASIZE_8BIT;
+  hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
+  hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
+  hspi1.Init.NSS = SPI_NSS_SOFT;
+  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_32;
   hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
@@ -303,6 +430,44 @@ static void MX_SPI1_Init(void)
   /* USER CODE BEGIN SPI1_Init 2 */
 
   /* USER CODE END SPI1_Init 2 */
+
+}
+
+/**
+  * @brief TIM6 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM6_Init(void)
+{
+
+  /* USER CODE BEGIN TIM6_Init 0 */
+
+  /* USER CODE END TIM6_Init 0 */
+
+  TIM_MasterConfigTypeDef sMasterConfig = {0};
+
+  /* USER CODE BEGIN TIM6_Init 1 */
+
+  /* USER CODE END TIM6_Init 1 */
+  htim6.Instance = TIM6;
+  htim6.Init.Prescaler = 249;
+  htim6.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim6.Init.Period = 999;
+  htim6.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim6) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_UPDATE;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim6, &sMasterConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM6_Init 2 */
+
+  /* USER CODE END TIM6_Init 2 */
 
 }
 
@@ -356,35 +521,19 @@ static void MX_GPIO_Init(void)
 
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOH_CLK_ENABLE();
-  __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOC_CLK_ENABLE();
+  __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);         // PA4 (LED) begint UIT
-  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);         // PC9 (CS) begint HIGH = chip niet geselecteerd
+  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);
 
-  /*Configure GPIO pin : PA4 - Ingebouwde LED (LD2) */
-  // PA4 is de groene LED op het Nucleo-board, gebruikt als USB-statuslampje
+  /*Configure GPIO pin : PA4 */
   GPIO_InitStruct.Pin = GPIO_PIN_4;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;   // Push-pull uitgang: kan actief hoog en laag rijden
-  GPIO_InitStruct.Pull = GPIO_NOPULL;           // Geen interne weerstand nodig (uitgang)
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH; // Hoge schakelsnelheid
-  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-
-  /*Configure GPIO pin : PC9 - Chip Select (CS) voor de MCP23S17 */
-  // CS-pin: LOW = MCP23S17 luistert, HIGH = MCP23S17 genegeerd
-  GPIO_InitStruct.Pin = GPIO_PIN_9;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;   // Uitgang om CS aan te sturen
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
-  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
-
-  /*Configure GPIO pin : PC4 - Digitale ingang */
-  GPIO_InitStruct.Pin = GPIO_PIN_4;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;       // Ingang: leest de spanning op de pin
-  GPIO_InitStruct.Pull = GPIO_NOPULL;           // Geen pull-up/pull-down
-  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
   /* USER CODE BEGIN MX_GPIO_Init_2 */
 
@@ -565,6 +714,77 @@ void scan_matrix(void)
   
   // Zet alle kolommen terug HOOG na de scan (ruststand)
   mcp23s17_write_reg(MCP23S17_GPIOA, 0x0F);
+}
+
+//--------------------------------------------------------------------+
+// MIDI Functions
+//--------------------------------------------------------------------+
+
+// Stuurt een MIDI CC (Control Change) bericht over USB naar de computer
+//
+// MIDI CC bericht: [0xB0 | kanaal, controller#, waarde]
+// controller# = 0-119 (verschillende MIDI CC's)
+// waarde = 0-127 (controlwaarde, bijv. volume)
+//
+// Gebruikte CC's:
+// CC #10 (Pan-potentiometer 1): LR pan
+// CC #11 (Expression-potentiometer 2): expressie/dynamica
+void send_midi_cc(uint8_t controller, uint8_t value)
+{
+  // Controleer of de USB-verbinding actief is
+  if (!tud_midi_mounted()) {
+    return;
+  }
+
+  uint8_t cable_num = 0;   // USB MIDI kabel nummer
+  uint8_t channel = 0;     // MIDI-kanaal 0 = kanaal 1
+  uint8_t msg[3];          // MIDI-bericht: 3 bytes
+
+  // CC (Control Change) bericht: statusbyte 0xB0 + kanaalnummer
+  msg[0] = 0xB0 | channel;    // 0xB0 = CC commando
+  msg[1] = controller;        // Welke controller (0-119)
+  msg[2] = value;             // Waarde (0-127)
+
+  // Stuur het 3-byte MIDI-bericht via USB
+  tud_midi_stream_write(cable_num, msg, 3);
+}
+
+//--------------------------------------------------------------------+
+// Potentiometer Handling
+//--------------------------------------------------------------------+
+
+// Lees beide potentiometers in en stuur MIDI CC's als ze veranderen
+//
+// De ADC leest voortdurend PA0 (kanaal 0) en PA1 (kanaal 1) via DMA.
+// Deze buffer-waarden worden aan het eind van elke ADC-conversie
+// geüpdate in de DMA.
+//
+// PA0 (ADC_CHANNEL_0) -> CC#10 (pan)
+// PA1 (ADC_CHANNEL_1) -> CC#11 (expression)
+//
+// Voor elke potentiometer:
+//  1. Controleer of de waarde meer dan HYSTERESIS veranderd is
+//  2. Als je, stuur MIDI CC bericht
+//  3. Pas vorige waarde aan voor volgende keer
+void handle_potentiometers(void)
+{
+  // Potentiometer 1 (PA0 / ADC channel 0) -> CC #10 (Pan)
+  if (adc_buffer[0] != adc_prev[0] && 
+      (adc_buffer[0] >= adc_prev[0] + ADC_HYSTERESIS || 
+       adc_buffer[0] <= adc_prev[0] - ADC_HYSTERESIS))
+  {
+    send_midi_cc(10, adc_buffer[0]);  // CC #10 = Pan
+    adc_prev[0] = adc_buffer[0];
+  }
+
+  // Potentiometer 2 (PA1 / ADC channel 1) -> CC #11 (Expression)
+  if (adc_buffer[1] != adc_prev[1] && 
+      (adc_buffer[1] >= adc_prev[1] + ADC_HYSTERESIS || 
+       adc_buffer[1] <= adc_prev[1] - ADC_HYSTERESIS))
+  {
+    send_midi_cc(11, adc_buffer[1]);  // CC #11 = Expression
+    adc_prev[1] = adc_buffer[1];
+  }
 }
 
 //--------------------------------------------------------------------+
