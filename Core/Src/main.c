@@ -111,8 +111,8 @@ static void MX_GPIO_Init(void);
 static void MX_GPDMA1_Init(void);
 static void MX_ADC1_Init(void);
 static void MX_TIM6_Init(void);
-static void MX_SPI1_Init(void);
 static void MX_USB_PCD_Init(void);
+static void MX_SPI1_Init(void);
 /* USER CODE BEGIN PFP */
 extern void tusb_hal_init(void);
 void midi_task(void);
@@ -162,19 +162,14 @@ int main(void)
   MX_GPDMA1_Init();
   MX_ADC1_Init();
   MX_TIM6_Init();
+	MX_USB_PCD_Init();
   MX_SPI1_Init();
-  MX_USB_PCD_Init();
   /* USER CODE BEGIN 2 */
 
   // Initialiseer de TinyUSB-stack (softwarelaag die USB-MIDI regelt)
   tusb_init();
   tusb_hal_init();
-
-  // Wacht 1 seconde zodat de computer de USB-verbinding kan herkennen en configureren
-  HAL_Delay(1000);
   
-  // Geef de MCP23S17 tijd om op te starten na het inschakelen
-  HAL_Delay(10);
   mcp23s17_init();  // Configureer de MCP23S17 (richtingen, pull-ups, beginwaarden)
 
   // Start timer-trigger en ADC DMA zodat adc_value continu wordt ververst
@@ -519,6 +514,7 @@ static void MX_GPIO_Init(void)
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);
 
   /*Configure GPIO pin : PA4 */
   GPIO_InitStruct.Pin = GPIO_PIN_4;
@@ -526,6 +522,13 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : PC9 */
+  GPIO_InitStruct.Pin = GPIO_PIN_9;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
   /*Configure GPIO pin : PC4 */
   GPIO_InitStruct.Pin = GPIO_PIN_4;
