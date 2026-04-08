@@ -115,7 +115,7 @@ static void MX_GPIO_Init(void);
 static void MX_GPDMA1_Init(void);
 static void MX_ADC1_Init(void);
 static void MX_TIM6_Init(void);
-static void MX_USB_PCD_Init(void);
+static void MX_USB_PCD_Init (void);
 static void MX_SPI1_Init(void);
 /* USER CODE BEGIN PFP */
 extern void tusb_hal_init(void);
@@ -174,14 +174,14 @@ int main(void)
   HAL_NVIC_DisableIRQ(USB_DRD_FS_IRQn);
 
   // Initialiseer de TinyUSB-stack (softwarelaag die USB-MIDI regelt)
-  tusb_init();
   tusb_hal_init();
-
+  tusb_init();
+	
   // TinyUSB is klaar: wis eventuele pending USB interrupt en zet IRQ terug aan.
   HAL_NVIC_ClearPendingIRQ(USB_DRD_FS_IRQn);
   HAL_NVIC_EnableIRQ(USB_DRD_FS_IRQn);
 
-  // Wacht 1 seconde zodat de computer de USB-verbinding kan herkennen en configureren
+  // Wacht even zodat de computer de USB-verbinding kan herkennen en configureren
   HAL_Delay(1000);
   
   // Configureer de MCP23S17 (richtingen, pull-ups, beginwaarden)
@@ -484,10 +484,11 @@ static void MX_TIM6_Init(void)
 }
 
 /**
-  * @brief USB Initialization Function
+  * @brief GPIO Initialization Function
   * @param None
   * @retval None
   */
+
 static void MX_USB_PCD_Init(void)
 {
 
@@ -524,6 +525,7 @@ static void MX_USB_PCD_Init(void)
   * @param None
   * @retval None
   */
+
 static void MX_GPIO_Init(void)
 {
   GPIO_InitTypeDef GPIO_InitStruct = {0};

@@ -21,10 +21,12 @@ extern uint32_t HAL_GetTick(void);
 //--------------------------------------------------------------------+
 
 // Initialiseer de boardhardware voor TinyUSB
-// Bij STM32 doet de HAL (MX_USB_PCD_Init) dit al in main.c, dus hier hoeven we niets te doen
+// Hier zetten we alleen de USB clock, VDDUSB en interrupt-priority op;
+// de USB device stack zelf wordt door TinyUSB beheerd.
 void tusb_hal_init(void)
 {
   RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = {0};
+  GPIO_InitTypeDef GPIO_InitStruct = {0};
 
   PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_USB;
   PeriphClkInitStruct.UsbClockSelection = RCC_USBCLKSOURCE_HSI48;
@@ -35,6 +37,15 @@ void tusb_hal_init(void)
 
   HAL_PWREx_EnableVddUSB();
   __HAL_RCC_USB_CLK_ENABLE();
+  __HAL_RCC_GPIOA_CLK_ENABLE();
+
+  // USB FS data pins must be in alternate-function mode for enumeration to work.
+  GPIO_InitStruct.Pin = GPIO_PIN_11 | GPIO_PIN_12;
+  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+  GPIO_InitStruct.Alternate = GPIO_AF10_USB;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
   HAL_NVIC_SetPriority(USB_DRD_FS_IRQn, 0, 0);
 }
