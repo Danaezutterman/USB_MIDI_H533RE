@@ -97,6 +97,7 @@ PCD_HandleTypeDef hpcd_USB_DRD_FS;
 // Hiermee detecteren we het MOMENT van indrukken/loslaten (flank-detectie)
 static bool button_prev_state[16] = {false};
 
+<<<<<<< HEAD
 // ADC-buffers voor potentiometers (2 kanalen)
 // PAO (ADC_CHANNEL_0) -> potentiometer 1 -> MIDI CC #10
 // PA1 (ADC_CHANNEL_1) -> potentiometer 2 -> MIDI CC #11
@@ -106,6 +107,13 @@ static uint8_t adc_prev[2] = {255, 255};
 // Hysterese for potentiometers: waarde moet minstens 5 veranderen voor update
 // Dit filtert kleine ruis uit
 const uint8_t ADC_HYSTERESIS = 5;
+=======
+// ADC buffer voor DMA (1 waarde van 8-bits ADC)
+static uint8_t adc_value = 0;
+
+// Vorige MIDI CC waarde bijhouden (voor aan te zien of waarde is veranderd)
+static uint8_t prev_midi_cc_value = 255;
+>>>>>>> 733e2a3faf01b795d589b6688bdabb07a6659383
 
 /* USER CODE END PV */
 
@@ -124,8 +132,12 @@ void mcp23s17_write_reg(uint8_t reg, uint8_t value);
 uint8_t mcp23s17_read_reg(uint8_t reg);
 void mcp23s17_init(void);
 void scan_matrix(void);
+void scan_potentiometer(void);
 void send_midi_note(uint8_t note, bool on);
+<<<<<<< HEAD
 void handle_potentiometers(void);
+=======
+>>>>>>> 733e2a3faf01b795d589b6688bdabb07a6659383
 void send_midi_cc(uint8_t controller, uint8_t value);
 /* USER CODE END PFP */
 
@@ -166,6 +178,10 @@ int main(void)
   MX_GPDMA1_Init();
   MX_ADC1_Init();
   MX_TIM6_Init();
+<<<<<<< HEAD
+=======
+	MX_USB_PCD_Init();
+>>>>>>> 733e2a3faf01b795d589b6688bdabb07a6659383
   MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
 
@@ -175,6 +191,7 @@ int main(void)
   // Initialiseer de TinyUSB-stack (softwarelaag die USB-MIDI regelt)
   tusb_init();
   tusb_hal_init();
+<<<<<<< HEAD
 
   // TinyUSB is klaar: wis eventuele pending USB interrupt en zet IRQ terug aan.
   HAL_NVIC_ClearPendingIRQ(USB_DRD_FS_IRQn);
@@ -191,6 +208,21 @@ int main(void)
   
   // Start Timer6: trigger voor ADC met vast interval (~1kHz stemupling)
   HAL_TIM_Base_Start(&htim6);
+=======
+  
+  mcp23s17_init();  // Configureer de MCP23S17 (richtingen, pull-ups, beginwaarden)
+>>>>>>> 733e2a3faf01b795d589b6688bdabb07a6659383
+
+  // Start timer-trigger en ADC DMA zodat adc_value continu wordt ververst
+  if (HAL_TIM_Base_Start(&htim6) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  if (HAL_ADC_Start_DMA(&hadc1, (uint32_t *)&adc_value, 1) != HAL_OK)
+  {
+    Error_Handler();
+  }
 
   /* USER CODE END 2 */
 
@@ -218,6 +250,9 @@ int main(void)
 
     // Scan de 4x4 knoppenmatrix en detecteer indrukken/loslaten
     scan_matrix();
+    
+    // Scan de potentiometer en stuur MIDI CC waarde
+    scan_potentiometer();
 
     // Lees potentiometers en stuur MIDI CC's
     handle_potentiometers();
@@ -315,6 +350,7 @@ static void MX_ADC1_Init(void)
   /** Common config
   */
   hadc1.Instance = ADC1;
+<<<<<<< HEAD
   hadc1.Init.ClockPrescaler = ADC_CLOCK_ASYNC_DIV1;
   hadc1.Init.Resolution = ADC_RESOLUTION_8B;
   hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
@@ -323,6 +359,16 @@ static void MX_ADC1_Init(void)
   hadc1.Init.LowPowerAutoWait = DISABLE;
   hadc1.Init.ContinuousConvMode = DISABLE;
   hadc1.Init.NbrOfConversion = 2;
+=======
+  hadc1.Init.ClockPrescaler = ADC_CLOCK_ASYNC_DIV4;
+  hadc1.Init.Resolution = ADC_RESOLUTION_8B;
+  hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
+  hadc1.Init.ScanConvMode = ADC_SCAN_DISABLE;
+  hadc1.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
+  hadc1.Init.LowPowerAutoWait = DISABLE;
+  hadc1.Init.ContinuousConvMode = DISABLE;
+  hadc1.Init.NbrOfConversion = 1;
+>>>>>>> 733e2a3faf01b795d589b6688bdabb07a6659383
   hadc1.Init.DiscontinuousConvMode = DISABLE;
   hadc1.Init.ExternalTrigConv = ADC_EXTERNALTRIG_T6_TRGO;
   hadc1.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_RISING;
@@ -337,7 +383,11 @@ static void MX_ADC1_Init(void)
 
   /** Configure Regular Channel
   */
+<<<<<<< HEAD
   sConfig.Channel = ADC_CHANNEL_0;
+=======
+  sConfig.Channel = ADC_CHANNEL_1;
+>>>>>>> 733e2a3faf01b795d589b6688bdabb07a6659383
   sConfig.Rank = ADC_REGULAR_RANK_1;
   sConfig.SamplingTime = ADC_SAMPLETIME_24CYCLES_5;
   sConfig.SingleDiff = ADC_SINGLE_ENDED;
@@ -347,6 +397,7 @@ static void MX_ADC1_Init(void)
   {
     Error_Handler();
   }
+<<<<<<< HEAD
 
   /** Configure Regular Channel
   */
@@ -357,6 +408,8 @@ static void MX_ADC1_Init(void)
   {
     Error_Handler();
   }
+=======
+>>>>>>> 733e2a3faf01b795d589b6688bdabb07a6659383
   /* USER CODE BEGIN ADC1_Init 2 */
 
   /* USER CODE END ADC1_Init 2 */
@@ -533,13 +586,36 @@ static void MX_GPIO_Init(void)
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);
+<<<<<<< HEAD
+=======
+  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);
+>>>>>>> 733e2a3faf01b795d589b6688bdabb07a6659383
 
   /*Configure GPIO pin : PA4 */
   GPIO_InitStruct.Pin = GPIO_PIN_4;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+<<<<<<< HEAD
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+=======
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : PC9 */
+  GPIO_InitStruct.Pin = GPIO_PIN_9;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : PC4 */
+  GPIO_InitStruct.Pin = GPIO_PIN_4;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+>>>>>>> 733e2a3faf01b795d589b6688bdabb07a6659383
 
   /* USER CODE BEGIN MX_GPIO_Init_2 */
 
@@ -834,6 +910,70 @@ void send_midi_note(uint8_t note, bool on)
 
   // Stuur het 3-byte MIDI-bericht via USB naar de computer
   tud_midi_stream_write(cable_num, msg, 3);
+}
+
+// Stuurt een MIDI Control Change (CC) bericht over USB naar de computer
+// Gebruikt voor analoge waarden zoals volume, pan, filter, etc.
+//
+// MIDI CC bericht: [0xB0 | kanaal, controller, waarde]
+// Controller 7 = volume, 1 = modulation wheel, 64 = sustain pedal, etc.
+void send_midi_cc(uint8_t controller, uint8_t value)
+{
+  // Controleer of de USB-verbinding actief is
+  if (!tud_midi_mounted()) {
+    return;
+  }
+
+  uint8_t cable_num = 0;  // USB MIDI kabel nummer
+  uint8_t channel = 0;    // MIDI-kanaal 0 = kanaal 1
+  uint8_t msg[3];
+
+  msg[0] = 0xB0 | channel;  // 0xB0 = Control Change commando
+  msg[1] = controller;       // Welke controller (0-119)
+  msg[2] = value;            // Waarde (0-127)
+
+  // Stuur het 3-byte MIDI-bericht via USB naar de computer
+  tud_midi_stream_write(cable_num, msg, 3);
+}
+
+//--------------------------------------------------------------------+
+// Potentiometer Scanning
+//--------------------------------------------------------------------+
+
+// Scant de potentiometer (ADC op PA1) en stuurt MIDI CC waarde
+// De ADC wordt via DMA continu gesampeld, dus adc_value is altijd actueel
+void scan_potentiometer(void)
+{
+  // Scan elke 50 milliseconden (zodat wijzigingen maar 1x per 50ms worden gestuurd)
+  static uint32_t last_scan_ms = 0;
+  static uint32_t last_log_ms = 0;
+  
+  if (HAL_GetTick() - last_scan_ms < 50) {
+    return;  // Nog niet 50ms verstreken -> niets doen
+  }
+  last_scan_ms = HAL_GetTick();
+
+  // Toon ruwe ADC-waarde periodiek op de seriele monitor voor debugging.
+  if (HAL_GetTick() - last_log_ms >= 100) {
+    last_log_ms = HAL_GetTick();
+    printf("ADC: %u\r\n", adc_value);
+  }
+
+  // Controleer of de waarde is veranderd door hysterese te gebruiken
+  // Dit voorkomt dat we MIDI-berichten sturen voor kleine ruis-fluctuaties
+  // (adc_value is 0-255, dus ~1% hysterese = ongeveer 2-3 units)
+  int16_t difference = (int16_t)adc_value - (int16_t)prev_midi_cc_value;
+  
+  if (difference > 2 || difference < -2)  // Waarde is meer dan 2 units veranderd
+  {
+    prev_midi_cc_value = adc_value;
+    
+    // Stuur MIDI CC controller 7 (volume) met de potentiometerwaarde
+    // adc_value is 0-255, MIDI CC is 0-127, dus delen door 2
+    uint8_t midi_value = adc_value >> 1;  // Bit shift right = delen door 2
+    
+    send_midi_cc(7, midi_value);  // Controller 7 = volume
+  }
 }
 
 //--------------------------------------------------------------------+

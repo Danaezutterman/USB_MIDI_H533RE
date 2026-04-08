@@ -108,6 +108,7 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef* hadc)
     /* Peripheral clock enable */
     __HAL_RCC_ADC_CLK_ENABLE();
 
+<<<<<<< HEAD
     __HAL_RCC_GPIOC_CLK_ENABLE();
     __HAL_RCC_GPIOA_CLK_ENABLE();
     /**ADC1 GPIO Configuration
@@ -125,6 +126,13 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef* hadc)
     HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
     GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_6;
+=======
+    __HAL_RCC_GPIOA_CLK_ENABLE();
+    /**ADC1 GPIO Configuration
+    PA1     ------> ADC1_INP1
+    */
+    GPIO_InitStruct.Pin = GPIO_PIN_1;
+>>>>>>> 733e2a3faf01b795d589b6688bdabb07a6659383
     GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
@@ -210,6 +218,7 @@ void HAL_ADC_MspDeInit(ADC_HandleTypeDef* hadc)
     __HAL_RCC_ADC_CLK_DISABLE();
 
     /**ADC1 GPIO Configuration
+<<<<<<< HEAD
     PC0     ------> ADC1_INP10
     PC1     ------> ADC1_INP11
     PC2     ------> ADC1_INP12
@@ -221,6 +230,11 @@ void HAL_ADC_MspDeInit(ADC_HandleTypeDef* hadc)
     HAL_GPIO_DeInit(GPIOC, GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3);
 
     HAL_GPIO_DeInit(GPIOA, GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_6);
+=======
+    PA1     ------> ADC1_INP1
+    */
+    HAL_GPIO_DeInit(GPIOA, GPIO_PIN_1);
+>>>>>>> 733e2a3faf01b795d589b6688bdabb07a6659383
 
     /* ADC1 DMA DeInit */
     HAL_DMA_DeInit(hadc->DMA_Handle);
@@ -373,6 +387,7 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* htim_base)
   */
 void HAL_PCD_MspInit(PCD_HandleTypeDef* hpcd)
 {
+  GPIO_InitTypeDef GPIO_InitStruct = {0};
   RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = {0};
   if(hpcd->Instance==USB_DRD_FS)
   {
@@ -393,6 +408,19 @@ void HAL_PCD_MspInit(PCD_HandleTypeDef* hpcd)
     HAL_PWREx_EnableVddUSB();
     /* Peripheral clock enable */
     __HAL_RCC_USB_CLK_ENABLE();
+    __HAL_RCC_GPIOA_CLK_ENABLE();
+
+    /**USB_DRD_FS GPIO Configuration
+    PA11     ------> USB_DM
+    PA12     ------> USB_DP
+    */
+    GPIO_InitStruct.Pin = GPIO_PIN_11|GPIO_PIN_12;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+    GPIO_InitStruct.Alternate = GPIO_AF10_USB;
+    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
     /* USB_DRD_FS interrupt Init */
     HAL_NVIC_SetPriority(USB_DRD_FS_IRQn, 0, 0);
     HAL_NVIC_EnableIRQ(USB_DRD_FS_IRQn);
@@ -419,6 +447,12 @@ void HAL_PCD_MspDeInit(PCD_HandleTypeDef* hpcd)
     /* USER CODE END USB_DRD_FS_MspDeInit 0 */
     /* Peripheral clock disable */
     __HAL_RCC_USB_CLK_DISABLE();
+
+    /**USB_DRD_FS GPIO Configuration
+    PA11     ------> USB_DM
+    PA12     ------> USB_DP
+    */
+    HAL_GPIO_DeInit(GPIOA, GPIO_PIN_11|GPIO_PIN_12);
 
     /* USB_DRD_FS interrupt DeInit */
     HAL_NVIC_DisableIRQ(USB_DRD_FS_IRQn);

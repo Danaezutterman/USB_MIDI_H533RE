@@ -59,6 +59,10 @@
 extern DMA_NodeTypeDef Node_GPDMA1_Channel0;
 extern DMA_QListTypeDef List_GPDMA1_Channel0;
 extern DMA_HandleTypeDef handle_GPDMA1_Channel0;
+<<<<<<< HEAD
+=======
+extern PCD_HandleTypeDef hpcd_USB_DRD_FS;
+>>>>>>> 733e2a3faf01b795d589b6688bdabb07a6659383
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */

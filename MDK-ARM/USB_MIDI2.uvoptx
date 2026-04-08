@@ -626,8 +626,13 @@
   </Group>
 
   <Group>
+<<<<<<< HEAD
     <GroupName>Middlewares/tinyusb</GroupName>
     <tvExp>0</tvExp>
+=======
+    <GroupName>lib/tinyusb</GroupName>
+    <tvExp>1</tvExp>
+>>>>>>> 733e2a3faf01b795d589b6688bdabb07a6659383
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>

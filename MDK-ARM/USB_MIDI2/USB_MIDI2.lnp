@@ -39,7 +39,7 @@
 "usb_midi2\midi_device.o"
 "usb_midi2\dcd_stm32_fsdev.o"
 "usb_midi2\fsdev_common.o"
---strict --scatter "USB_MIDI2\USB_MIDI2.sct"
+--library_type=microlib --strict --scatter "USB_MIDI2\USB_MIDI2.sct"
 --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers
 --list "USB_MIDI2.map" -o USB_MIDI2\USB_MIDI2.axf
