@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 usb_midi2/tusb_port.o: ..\Core\Src\tusb_port.c ..\Core\Inc\main.h \
   ..\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal.h \
   ..\Core\Inc\stm32h5xx_hal_conf.h \
@@ -36,10 +35,6 @@ usb_midi2/tusb_port.o: ..\Core\Src\tusb_port.c ..\Core\Inc\main.h \
   ..\Core\Inc\stm32h5xx_nucleo_conf.h \
   ..\Drivers\BSP\STM32H5xx_Nucleo\stm32h5xx_nucleo_errno.h \
   ..\lib\tinyusb\src\tusb.h ..\lib\tinyusb\src\common\tusb_common.h \
-=======
-usb_midi2/tusb_port.o: ..\Core\Src\tusb_port.c ..\lib\tinyusb\src\tusb.h \
-  ..\lib\tinyusb\src\common\tusb_common.h \
->>>>>>> 733e2a3faf01b795d589b6688bdabb07a6659383
   ..\lib\tinyusb\src\tusb_option.h \
   ..\lib\tinyusb\src\common\tusb_compiler.h ..\Core\Inc\tusb_config.h \
   ..\lib\tinyusb\src\common\tusb_mcu.h \
