@@ -166,13 +166,19 @@ int main(void)
   MX_GPDMA1_Init();
   MX_ADC1_Init();
   MX_TIM6_Init();
-	MX_USB_PCD_Init();
   MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
+
+  // Voorkom USB-interrupts voordat TinyUSB volledig geïnitialiseerd is.
+  HAL_NVIC_DisableIRQ(USB_DRD_FS_IRQn);
 
   // Initialiseer de TinyUSB-stack (softwarelaag die USB-MIDI regelt)
   tusb_init();
   tusb_hal_init();
+
+  // TinyUSB is klaar: wis eventuele pending USB interrupt en zet IRQ terug aan.
+  HAL_NVIC_ClearPendingIRQ(USB_DRD_FS_IRQn);
+  HAL_NVIC_EnableIRQ(USB_DRD_FS_IRQn);
 
   // Wacht 1 seconde zodat de computer de USB-verbinding kan herkennen en configureren
   HAL_Delay(1000);

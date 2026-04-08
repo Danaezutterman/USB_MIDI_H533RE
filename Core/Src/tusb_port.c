@@ -10,6 +10,7 @@
  */
 
 #include <stdint.h>
+#include "main.h"
 #include "tusb.h"
 
 // Verklaring dat HAL_GetTick() bestaat in de HAL-bibliotheek (extern = elders gedefinieerd)
@@ -23,7 +24,19 @@ extern uint32_t HAL_GetTick(void);
 // Bij STM32 doet de HAL (MX_USB_PCD_Init) dit al in main.c, dus hier hoeven we niets te doen
 void tusb_hal_init(void)
 {
-  // Niets nodig: USB-hardware wordt al geïnitialiseerd door MX_USB_PCD_Init() in main.c
+  RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = {0};
+
+  PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_USB;
+  PeriphClkInitStruct.UsbClockSelection = RCC_USBCLKSOURCE_HSI48;
+  if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  HAL_PWREx_EnableVddUSB();
+  __HAL_RCC_USB_CLK_ENABLE();
+
+  HAL_NVIC_SetPriority(USB_DRD_FS_IRQn, 0, 0);
 }
 
 // Geef de huidige tijd terug in milliseconden - TinyUSB gebruikt dit voor interne timers
