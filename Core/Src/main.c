@@ -88,8 +88,6 @@ SPI_HandleTypeDef hspi1;
 
 TIM_HandleTypeDef htim6;
 
-PCD_HandleTypeDef hpcd_USB_DRD_FS;
-
 /* USER CODE BEGIN PV */
 
 // Vorige toestand van elke knop bijhouden (16 knoppen in 4x4 matrix)
@@ -103,10 +101,6 @@ static bool button_prev_state[16] = {false};
 static uint8_t adc_buffer[2] = {0, 0};
 static uint8_t adc_prev[2] = {255, 255};
 
-// Hysterese for potentiometers: waarde moet minstens 5 veranderen voor update
-// Dit filtert kleine ruis uit
-const uint8_t ADC_HYSTERESIS = 5;
-
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -115,7 +109,6 @@ static void MX_GPIO_Init(void);
 static void MX_GPDMA1_Init(void);
 static void MX_ADC1_Init(void);
 static void MX_TIM6_Init(void);
-static void MX_USB_PCD_Init (void);
 static void MX_SPI1_Init(void);
 /* USER CODE BEGIN PFP */
 extern void tusb_hal_init(void);
@@ -166,14 +159,13 @@ int main(void)
   MX_GPDMA1_Init();
   MX_ADC1_Init();
   MX_TIM6_Init();
-	MX_USB_PCD_Init();
   MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
 
   // Voorkom USB-interrupts voordat TinyUSB volledig geïnitialiseerd is.
   HAL_NVIC_DisableIRQ(USB_DRD_FS_IRQn);
 
-  // Initialiseer de TinyUSB-stack (softwarelaag die USB-MIDI regelt)
+  // Correcte TinyUSB volgorde: eerst hardwarelaag, dan stack initialiseren.
   tusb_hal_init();
   tusb_init();
 	
@@ -489,43 +481,6 @@ static void MX_TIM6_Init(void)
   * @retval None
   */
 
-static void MX_USB_PCD_Init(void)
-{
-
-  /* USER CODE BEGIN USB_Init 0 */
-
-  /* USER CODE END USB_Init 0 */
-
-  /* USER CODE BEGIN USB_Init 1 */
-
-  /* USER CODE END USB_Init 1 */
-  hpcd_USB_DRD_FS.Instance = USB_DRD_FS;
-  hpcd_USB_DRD_FS.Init.dev_endpoints = 8;
-  hpcd_USB_DRD_FS.Init.speed = USBD_FS_SPEED;
-  hpcd_USB_DRD_FS.Init.phy_itface = PCD_PHY_EMBEDDED;
-  hpcd_USB_DRD_FS.Init.Sof_enable = DISABLE;
-  hpcd_USB_DRD_FS.Init.low_power_enable = DISABLE;
-  hpcd_USB_DRD_FS.Init.lpm_enable = DISABLE;
-  hpcd_USB_DRD_FS.Init.battery_charging_enable = DISABLE;
-  hpcd_USB_DRD_FS.Init.vbus_sensing_enable = DISABLE;
-  hpcd_USB_DRD_FS.Init.bulk_doublebuffer_enable = DISABLE;
-  hpcd_USB_DRD_FS.Init.iso_singlebuffer_enable = DISABLE;
-  if (HAL_PCD_Init(&hpcd_USB_DRD_FS) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN USB_Init 2 */
-
-  /* USER CODE END USB_Init 2 */
-
-}
-
-/**
-  * @brief GPIO Initialization Function
-  * @param None
-  * @retval None
-  */
-
 static void MX_GPIO_Init(void)
 {
   GPIO_InitTypeDef GPIO_InitStruct = {0};
@@ -767,6 +722,7 @@ void send_midi_cc(uint8_t controller, uint8_t value)
 
   // Stuur het 3-byte MIDI-bericht via USB
   tud_midi_stream_write(cable_num, msg, 3);
+  tud_midi_write_flush();
 }
 
 //--------------------------------------------------------------------+
@@ -788,22 +744,31 @@ void send_midi_cc(uint8_t controller, uint8_t value)
 //  3. Pas vorige waarde aan voor volgende keer
 void handle_potentiometers(void)
 {
+  static uint32_t last_scan_ms = 0;
+
+  if (HAL_GetTick() - last_scan_ms < 50) {
+    return;
+  }
+  last_scan_ms = HAL_GetTick();
+
+  uint8_t pot1 = adc_buffer[0] >> 1;
+  uint8_t pot2 = adc_buffer[1] >> 1;
+
+  int16_t diff1 = (int16_t)pot1 - (int16_t)adc_prev[0];
+  int16_t diff2 = (int16_t)pot2 - (int16_t)adc_prev[1];
+
   // Potentiometer 1 (PA1 / ADC channel 1) -> CC #7 (Volume)
-  if (adc_buffer[0] != adc_prev[0] && 
-      (adc_buffer[0] >= adc_prev[0] + ADC_HYSTERESIS || 
-       adc_buffer[0] <= adc_prev[0] - ADC_HYSTERESIS))
+  if (diff1 > 2 || diff1 < -2)
   {
-    send_midi_cc(7, adc_buffer[0]);  // CC #7 = Volume
-    adc_prev[0] = adc_buffer[0];
+    send_midi_cc(7, pot1);  // CC #7 = Volume
+    adc_prev[0] = pot1;
   }
 
   // Potentiometer 2 (PB1 / ADC channel 5) -> CC #11 (Expression)
-  if (adc_buffer[1] != adc_prev[1] && 
-      (adc_buffer[1] >= adc_prev[1] + ADC_HYSTERESIS || 
-       adc_buffer[1] <= adc_prev[1] - ADC_HYSTERESIS))
+  if (diff2 > 2 || diff2 < -2)
   {
-    send_midi_cc(11, adc_buffer[1]);  // CC #11 = Expression
-    adc_prev[1] = adc_buffer[1];
+    send_midi_cc(11, pot2);  // CC #11 = Expression
+    adc_prev[1] = pot2;
   }
 }
 
@@ -848,6 +813,7 @@ void send_midi_note(uint8_t note, bool on)
 
   // Stuur het 3-byte MIDI-bericht via USB naar de computer
   tud_midi_stream_write(cable_num, msg, 3);
+  tud_midi_write_flush();
 }
 
 //--------------------------------------------------------------------+
