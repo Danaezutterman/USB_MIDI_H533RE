@@ -1,0 +1,19 @@
+nul
+
+# Markdown
+*.md
+
+# Keil build output
+MDK-ARM/USB_MIDI2/
+
+# Keil user-specific files
+MDK-ARM/*.uvguix.*
+MDK-ARM/*.uvoptx
+
+# Keil dependency/log files
+MDK-ARM/DebugConfig/
+*.build_log.htm
+*.dep
+*.htm
+*.map
+*.lnp
